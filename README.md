@@ -9,7 +9,7 @@
 
 이름|분류
 -|-
-[가위바위보_분류기]|Python, AI(Teachable Machine) ,Aruduino
+[가위바위보_분류기]|Python, AI(Teachable Machine) ,Arduino
 [암호화폐_시세조회기]| Python, GUI프로그래밍(PyQt5)
 
 
