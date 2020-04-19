@@ -225,14 +225,64 @@ void printSalesManageMenu();
 /* 메인 함수 */
 /* -------- */
 
+#define DEBUG
 
 int main()
 {
+	
+#ifdef DEBUG
+
 	memberList member_list;
 	salesList sales_list;
 	productList product_list;
 
-	printMainWindow(); // 메인 윈도우 오픈 
+	member mdata1 = { "Kim","01012345678",1000 };
+	member mdata2 = { "Lee","01099999999",2000 };
+
+	product pdata1 = { "Coffee",4000,0 };
+	product pdata2 = { "Cake",2000,2 };
+
+	sales sdata1 = { "20200419",15000 };
+	sales sdata2 = { "20200420",40000 };
+
+	/*DEBUG_MEMBER_LIST*/
+	initializeMemberList(&member_list);
+	addDataToMemberList(&member_list, 1, mdata1);
+	addDataToMemberList(&member_list, 2, mdata2);
+	printMemberList(&member_list);
+	deleteDataFromMemberList(&member_list, 1);
+	printMemberList(&member_list);
+
+	terminateMemberList(&member_list);
+
+	/*DEBUG_PRODUCT_LIST*/
+
+
+	initializeProductList(&product_list);
+	addDataToProductList(&product_list, 1, pdata1);
+	addDataToProductList(&product_list, 2, pdata2);
+	printProductList(&product_list);
+	deleteDataFromProductList(&product_list, 1);
+	printProductList(&product_list);
+
+	terminateProductList(&product_list);
+
+	/*DEBUG_MEMBER_LIST*/
+	initializeSalesList(&sales_list);
+	addDataToSalesList(&sales_list, 1, sdata1);
+	addDataToSalesList(&sales_list, 2, sdata2);
+	printSalesList(&sales_list);
+	deleteDataFromSalesList(&sales_list, 1);
+	printSalesList(&sales_list);
+
+	terminateSalesList(&sales_list);
+
+	return 0;
+
+
+#endif // DEBUG
+
+	//printMainWindow(); // 메인 윈도우 오픈 
 
 
 
@@ -268,7 +318,7 @@ bool isEmptySalesList(const salesList *list)										// 연결 리스트가 비어있는�
 }
 void setCurrentSalesNode(salesList *list, Index pos)								// 현재 선택 노드를 특정노드로 가르키게 하는 함수
 {
-	if (isEmpty(list))																// 빈 리스트일때 
+	if (isEmptySalesList(list))																// 빈 리스트일때 
 	{
 		list->crnt = list->tail;													// 꼬리노드로 가리킴
 		return;
@@ -281,21 +331,22 @@ void setCurrentSalesNode(salesList *list, Index pos)								// 현재 선택 노드를 
 }
 void initializeSalesList(salesList *list)											// 리스트를 초기화 하는 함수
 {
-	list->head = alllocNode();														// 머리 노드를 할당
-	list->tail = alllocNode();														// 꼬리 노드를 할당
-	setNode(list->head, NULL, list->tail, 0);										// 머리노드를 초기화
-	setNode(list->tail, list->head, NULL, 0);										// 꼬리 노드를 초기화
+	sales data = {0};
+	list->head = allocSalesNode();														// 머리 노드를 할당
+	list->tail = allocSalesNode();														// 꼬리 노드를 할당
+	setSalesNode(list->head, NULL, list->tail, data);										// 머리노드를 초기화
+	setSalesNode(list->tail, list->head, NULL, data);										// 꼬리 노드를 초기화
 
 	list->crnt = list->head;														// 현재 선택 노드 초기화
 }
 void printSalesList(const salesList *list)											// 리스트내의 데이터를 출력하는 함수
 {
 	salesNode *ptr = list->head->next;												// ptr을 맨 처음 값 노드로 설정
-	if (!isEmpty(list))																// 빈 리스트가 아니면 출력
+	if (!isEmptySalesList(list))																// 빈 리스트가 아니면 출력
 	{
 		while (ptr->next != NULL)													// 리스트 끝까지 탐색
 		{
-			printf("%c", ptr->data);												// 데이터 출력
+			printf("%s %d\n", ptr->data.date,ptr->data.todaySales);												// 데이터 출력
 			ptr = ptr->next;														// ptr을 다음 노드로		/*TODO 데이터 출력 형식 바꿔야함*/
 		}
 		printf("\n");   
@@ -304,30 +355,30 @@ void printSalesList(const salesList *list)											// 리스트내의 데이터를 출력
 }
 void addDataToSalesList(salesList *list, Index pos, sales data)					// 리스트의 특정 위치에 데이터를 추가하는 함수
 {
-	if (!isValidPosition(list, pos - 1))										// 올바른 위치에 삽입 여부
-	{
-		printf("invalid position\n");											// 오류메시지 출력
-		return;																	// 함수 비정상 종료
-	}
+	//if (!isValidPosition(list, pos - 1))										// 올바른 위치에 삽입 여부
+	//{
+	//	printf("invalid position\n");											// 오류메시지 출력
+	//	return;																	// 함수 비정상 종료
+	//}
 
-	setCurrentNode(list, pos);													// 현재 선택 노드를 pos위치 노드로 설정
+	setCurrentSalesNode(list, pos);													// 현재 선택 노드를 pos위치 노드로 설정
 
-	salesNode *new_node = alllocNode();											// 새로운 노드를 할당
+	salesNode *new_node = allocSalesNode();											// 새로운 노드를 할당
 	salesNode *crnt_node = list->crnt->prev;									// 삽입될 위치의 이전 주소 저장
 
 	crnt_node->next = new_node;													// 삽입될 위치의 다음 노드를 새노드에 연결
 	list->crnt->prev = new_node;												// 삽입될 위치의 이전 노드를 새노드에 연결
 
-	setNode(new_node, crnt_node, list->crnt, data);								// 새 노드 위치와 데이터 설정 
+	setSalesNode(new_node, crnt_node, list->crnt, data);								// 새 노드 위치와 데이터 설정 
 }
 void deleteDataFromSalesList(salesList *list, Index pos)							// 리스트내 특정 위치의 데이터를 삭제하는 함수
 {
-	if (!isValidPosition(list, pos))												// 올바른 위치에 접근 확인 함수
-	{
-		printf("invalid position\n");												// 오류메시지 출력
-		return;																		// 함수 비정상 종료
-	}
-	setCurrentNode(list, pos);														// 현재 선택 노드를 pos위치 노드로 설정
+	//if (!isValidPosition(list, pos))												// 올바른 위치에 접근 확인 함수
+	//{
+	//	printf("invalid position\n");												// 오류메시지 출력
+	//	return;																		// 함수 비정상 종료
+	//}
+	setCurrentSalesNode(list, pos);														// 현재 선택 노드를 pos위치 노드로 설정
 
 	salesNode *A = list->crnt->prev;												// 임시 지정 노드 설정
 	salesNode *B = list->crnt->next;												// 임시 지정 노드 설정
@@ -342,21 +393,21 @@ void deleteDataFromSalesList(salesList *list, Index pos)							// 리스트내 특정 
 }
 sales getDataFromSalesList(salesList *list, Index pos)								// 리스트내 특정 위치의 데이터를 반환하는 함수
 {
-	if (!isValidPosition(list, pos))												// 올바른 접근 여부 확인
-	{	
-		printf("invalid position\n");												// 오류 메시지 출력
-		return ;																	// 함수 비정상 종료
-	}
+	//if (!isValidPosition(list, pos))												// 올바른 접근 여부 확인
+	//{	
+	//	printf("invalid position\n");												// 오류 메시지 출력
+	//	return ;																	// 함수 비정상 종료
+	//}
 
-	setCurrentNode(list, pos);														// 현재 선택 노드를 pos번째 노드로
+	setCurrentSalesNode(list, pos);														// 현재 선택 노드를 pos번째 노드로
 
 	return list->crnt->data;														// 현재 선택 노드 데이터 반환
 }
 void terminateSalesList(salesList *list)											// 리스트에 할당된 공간을 해제하고 종료하는 함수
 {
-	while (!isEmpty(list))															// 빈 리스트가 될 때 까지
+	while (!isEmptySalesList(list))															// 빈 리스트가 될 때 까지
 	{
-		deleteData(list, 1);														// 맨 앞 노드를 삭제
+		deleteDataFromSalesList(list, 1);														// 맨 앞 노드를 삭제
 	}
 	list->crnt = NULL;																// 현재 선택 노드를 NULL 로
 	free(list->head);																// 머리 노드 할당 해제
@@ -393,7 +444,7 @@ bool isEmptyMemberList(const memberList *list)										// 연결 리스트가 비어있�
 }
 void setCurrentMemberNode(memberList *list, Index pos)								// 현재 선택 노드를 특정노드로 가르키게 하는 함수
 {
-	if (isEmpty(list))																// 빈 리스트일때 
+	if (isEmptyMemberList(list))																// 빈 리스트일때 
 	{
 		list->crnt = list->tail;													// 꼬리노드로 가리킴
 		return;
@@ -406,21 +457,22 @@ void setCurrentMemberNode(memberList *list, Index pos)								// 현재 선택 노드�
 }
 void initializeMemberList(memberList *list)											// 리스트를 초기화 하는 함수
 {
-	list->head = alllocNode();														// 머리 노드를 할당
-	list->tail = alllocNode();														// 꼬리 노드를 할당
-	setNode(list->head, NULL, list->tail, 0);										// 머리노드를 초기화
-	setNode(list->tail, list->head, NULL, 0);										// 꼬리 노드를 초기화
+	member data = { 0 };
+	list->head = allocMemberNode();														// 머리 노드를 할당
+	list->tail = allocMemberNode();														// 꼬리 노드를 할당
+	setMemberNode(list->head, NULL, list->tail, data);										// 머리노드를 초기화
+	setMemberNode(list->tail, list->head, NULL, data);										// 꼬리 노드를 초기화
 
 	list->crnt = list->head;														// 현재 선택 노드 초기화
 }
 void printMemberList(const memberList *list)											// 리스트내의 데이터를 출력하는 함수
 {
 	memberNode *ptr = list->head->next;												// ptr을 맨 처음 값 노드로 설정
-	if (!isEmpty(list))																// 빈 리스트가 아니면 출력
+	if (!isEmptyMemberList(list))																// 빈 리스트가 아니면 출력
 	{
 		while (ptr->next != NULL)													// 리스트 끝까지 탐색
 		{
-			printf("%c", ptr->data);												// 데이터 출력
+			printf("%s %s %d\n", ptr->data.name, ptr->data.id, ptr->data.point);												// 데이터 출력
 			ptr = ptr->next;														// ptr을 다음 노드로		/*TODO 데이터 출력 형식 바꿔야함*/
 		}
 		printf("\n");
@@ -429,30 +481,30 @@ void printMemberList(const memberList *list)											// 리스트내의 데이터를 출
 }
 void addDataToMemberList(memberList *list, Index pos, member data)					// 리스트의 특정 위치에 데이터를 추가하는 함수
 {
-	if (!isValidPosition(list, pos - 1))										// 올바른 위치에 삽입 여부
-	{
-		printf("invalid position\n");											// 오류메시지 출력
-		return;																	// 함수 비정상 종료
-	}
+	//if (!isValidPosition(list, pos - 1))										// 올바른 위치에 삽입 여부
+	//{
+	//	printf("invalid position\n");											// 오류메시지 출력
+	//	return;																	// 함수 비정상 종료
+	//}
 
-	setCurrentNode(list, pos);													// 현재 선택 노드를 pos위치 노드로 설정
+	setCurrentMemberNode(list, pos);													// 현재 선택 노드를 pos위치 노드로 설정
 
-	memberNode *new_node = alllocNode();											// 새로운 노드를 할당
+	memberNode *new_node = allocMemberNode();											// 새로운 노드를 할당
 	memberNode *crnt_node = list->crnt->prev;									// 삽입될 위치의 이전 주소 저장
 
 	crnt_node->next = new_node;													// 삽입될 위치의 다음 노드를 새노드에 연결
 	list->crnt->prev = new_node;												// 삽입될 위치의 이전 노드를 새노드에 연결
 
-	setNode(new_node, crnt_node, list->crnt, data);								// 새 노드 위치와 데이터 설정 
+	setMemberNode(new_node, crnt_node, list->crnt, data);								// 새 노드 위치와 데이터 설정 
 }
 void deleteDataFromMemberList(memberList *list, Index pos)							// 리스트내 특정 위치의 데이터를 삭제하는 함수
 {
-	if (!isValidPosition(list, pos))												// 올바른 위치에 접근 확인 함수
-	{
-		printf("invalid position\n");												// 오류메시지 출력
-		return;																		// 함수 비정상 종료
-	}
-	setCurrentNode(list, pos);														// 현재 선택 노드를 pos위치 노드로 설정
+	//if (!isValidPosition(list, pos))												// 올바른 위치에 접근 확인 함수
+	//{
+	//	printf("invalid position\n");												// 오류메시지 출력
+	//	return;																		// 함수 비정상 종료
+	//}
+	setCurrentMemberNode(list, pos);														// 현재 선택 노드를 pos위치 노드로 설정
 
 	memberNode *A = list->crnt->prev;												// 임시 지정 노드 설정
 	memberNode *B = list->crnt->next;												// 임시 지정 노드 설정
@@ -467,28 +519,32 @@ void deleteDataFromMemberList(memberList *list, Index pos)							// 리스트내 특�
 }
 member getDataFromMemberList(memberList *list, Index pos)								// 리스트내 특정 위치의 데이터를 반환하는 함수
 {
-	if (!isValidPosition(list, pos))												// 올바른 접근 여부 확인
-	{
-		printf("invalid position\n");												// 오류 메시지 출력
-		return;																	// 함수 비정상 종료
-	}
+	//if (!isValidPosition(list, pos))												// 올바른 접근 여부 확인
+	//{	
+	//	printf("invalid position\n");												// 오류 메시지 출력
+	//	return ;																	// 함수 비정상 종료
+	//}
 
-	setCurrentNode(list, pos);														// 현재 선택 노드를 pos번째 노드로
+	setCurrentMemberNode(list, pos);														// 현재 선택 노드를 pos번째 노드로
 
 	return list->crnt->data;														// 현재 선택 노드 데이터 반환
 }
 void terminateMemberList(memberList *list)											// 리스트에 할당된 공간을 해제하고 종료하는 함수
 {
-	while (!isEmpty(list))															// 빈 리스트가 될 때 까지
+	while (!isEmptyMemberList(list))															// 빈 리스트가 될 때 까지
 	{
-		deleteData(list, 1);														// 맨 앞 노드를 삭제
+		deleteDataFromMemberList(list, 1);														// 맨 앞 노드를 삭제
 	}
 	list->crnt = NULL;																// 현재 선택 노드를 NULL 로
 	free(list->head);																// 머리 노드 할당 해제
 	free(list->tail);																// 꼬리 노드 할당 해제
 }
 
-/* productList 에 대한 함수 목록 */
+
+
+
+/* 상품 함수*/
+
 
 productNode* allocProductNode()														// 새 노드의 주소를 반환하는 함수
 {
@@ -518,7 +574,7 @@ bool isEmptyProductList(const productList *list)										// 연결 리스트가 비어�
 }
 void setCurrentProductNode(productList *list, Index pos)								// 현재 선택 노드를 특정노드로 가르키게 하는 함수
 {
-	if (isEmpty(list))																// 빈 리스트일때 
+	if (isEmptyProductList(list))																// 빈 리스트일때 
 	{
 		list->crnt = list->tail;													// 꼬리노드로 가리킴
 		return;
@@ -531,21 +587,22 @@ void setCurrentProductNode(productList *list, Index pos)								// 현재 선택 노�
 }
 void initializeProductList(productList *list)											// 리스트를 초기화 하는 함수
 {
-	list->head = alllocNode();														// 머리 노드를 할당
-	list->tail = alllocNode();														// 꼬리 노드를 할당
-	setNode(list->head, NULL, list->tail, 0);										// 머리노드를 초기화
-	setNode(list->tail, list->head, NULL, 0);										// 꼬리 노드를 초기화
+	product data = { 0 };
+	list->head = allocProductNode();														// 머리 노드를 할당
+	list->tail = allocProductNode();														// 꼬리 노드를 할당
+	setProductNode(list->head, NULL, list->tail, data);										// 머리노드를 초기화
+	setProductNode(list->tail, list->head, NULL, data);										// 꼬리 노드를 초기화
 
 	list->crnt = list->head;														// 현재 선택 노드 초기화
 }
 void printProductList(const productList *list)											// 리스트내의 데이터를 출력하는 함수
 {
 	productNode *ptr = list->head->next;												// ptr을 맨 처음 값 노드로 설정
-	if (!isEmpty(list))																// 빈 리스트가 아니면 출력
+	if (!isEmptyProductList(list))																// 빈 리스트가 아니면 출력
 	{
 		while (ptr->next != NULL)													// 리스트 끝까지 탐색
 		{
-			printf("%c", ptr->data);												// 데이터 출력
+			printf("%s %d %d\n", ptr->data.name,ptr->data.price,ptr->data.sellCnt);												// 데이터 출력
 			ptr = ptr->next;														// ptr을 다음 노드로		/*TODO 데이터 출력 형식 바꿔야함*/
 		}
 		printf("\n");
@@ -554,30 +611,30 @@ void printProductList(const productList *list)											// 리스트내의 데이터를 
 }
 void addDataToProductList(productList *list, Index pos, product data)					// 리스트의 특정 위치에 데이터를 추가하는 함수
 {
-	if (!isValidPosition(list, pos - 1))										// 올바른 위치에 삽입 여부
-	{
-		printf("invalid position\n");											// 오류메시지 출력
-		return;																	// 함수 비정상 종료
-	}
+	//if (!isValidPosition(list, pos - 1))										// 올바른 위치에 삽입 여부
+	//{
+	//	printf("invalid position\n");											// 오류메시지 출력
+	//	return;																	// 함수 비정상 종료
+	//}
 
-	setCurrentNode(list, pos);													// 현재 선택 노드를 pos위치 노드로 설정
+	setCurrentProductNode(list, pos);													// 현재 선택 노드를 pos위치 노드로 설정
 
-	productNode *new_node = alllocNode();											// 새로운 노드를 할당
+	productNode *new_node = allocProductNode();											// 새로운 노드를 할당
 	productNode *crnt_node = list->crnt->prev;									// 삽입될 위치의 이전 주소 저장
 
 	crnt_node->next = new_node;													// 삽입될 위치의 다음 노드를 새노드에 연결
 	list->crnt->prev = new_node;												// 삽입될 위치의 이전 노드를 새노드에 연결
 
-	setNode(new_node, crnt_node, list->crnt, data);								// 새 노드 위치와 데이터 설정 
+	setProductNode(new_node, crnt_node, list->crnt, data);								// 새 노드 위치와 데이터 설정 
 }
 void deleteDataFromProductList(productList *list, Index pos)							// 리스트내 특정 위치의 데이터를 삭제하는 함수
 {
-	if (!isValidPosition(list, pos))												// 올바른 위치에 접근 확인 함수
-	{
-		printf("invalid position\n");												// 오류메시지 출력
-		return;																		// 함수 비정상 종료
-	}
-	setCurrentNode(list, pos);														// 현재 선택 노드를 pos위치 노드로 설정
+	//if (!isValidPosition(list, pos))												// 올바른 위치에 접근 확인 함수
+	//{
+	//	printf("invalid position\n");												// 오류메시지 출력
+	//	return;																		// 함수 비정상 종료
+	//}
+	setCurrentProductNode(list, pos);														// 현재 선택 노드를 pos위치 노드로 설정
 
 	productNode *A = list->crnt->prev;												// 임시 지정 노드 설정
 	productNode *B = list->crnt->next;												// 임시 지정 노드 설정
@@ -592,23 +649,27 @@ void deleteDataFromProductList(productList *list, Index pos)							// 리스트내 �
 }
 product getDataFromProductList(productList *list, Index pos)								// 리스트내 특정 위치의 데이터를 반환하는 함수
 {
-	if (!isValidPosition(list, pos))												// 올바른 접근 여부 확인
-	{
-		printf("invalid position\n");												// 오류 메시지 출력
-		return;																	// 함수 비정상 종료
-	}
+	//if (!isValidPosition(list, pos))												// 올바른 접근 여부 확인
+	//{	
+	//	printf("invalid position\n");												// 오류 메시지 출력
+	//	return ;																	// 함수 비정상 종료
+	//}
 
-	setCurrentNode(list, pos);														// 현재 선택 노드를 pos번째 노드로
+	setCurrentProductNode(list, pos);														// 현재 선택 노드를 pos번째 노드로
 
 	return list->crnt->data;														// 현재 선택 노드 데이터 반환
 }
 void terminateProductList(productList *list)											// 리스트에 할당된 공간을 해제하고 종료하는 함수
 {
-	while (!isEmpty(list))															// 빈 리스트가 될 때 까지
+	while (!isEmptyProductList(list))															// 빈 리스트가 될 때 까지
 	{
-		deleteData(list, 1);														// 맨 앞 노드를 삭제
+		deleteDataFromProductList(list, 1);														// 맨 앞 노드를 삭제
 	}
 	list->crnt = NULL;																// 현재 선택 노드를 NULL 로
 	free(list->head);																// 머리 노드 할당 해제
 	free(list->tail);																// 꼬리 노드 할당 해제
 }
+
+
+
+
