@@ -146,19 +146,32 @@ product getDataFromProductList(productList *list, Index pos);								// ¸®½ºÆ®³»
 void terminateProductList(productList *list);											// ¸®½ºÆ®¿¡ ÇÒ´çµÈ °ø°£À» ÇØÁ¦ÇÏ°í Á¾·áÇÏ´Â ÇÔ¼ö
 
 
+/* --------------------------*/
+/* ÀÎÅÍÆäÀÌ½º¿¡ ´ëÇÑ ÇÔ¼ö ¸ñ·Ï */
+/* --------------------------*/
+
+
+void printMainWindow();
+void printSelectMenu();
+void printMemberManageMenu();
+void printProductManageMenu();
+void printOrderManageMenu();
+void printSalesManageMenu();
+
 /* ------------------------ */
 /* ÁÖ¿ä ±â´É¿¡ ´ëÇÑ ÇÔ¼ö ¸ñ·Ï */
 /* ------------------------ */
 
 
 /* È¸¿ø °ü¸®¿¡ ´ëÇÑ ÇÔ¼ö ¸ñ·Ï */
-
+Index findIndexOfMemberByName(const memberList *list, const char name[]); // ÀÌ¸§À¸·Î È¸¿ø °Ë»ö
+Index findIndexOfMemberById(const memberList *list, const char id[]);	//È¸¿ø ¾ÆÀÌµğ °Ë»ö ÇÔ¼ö
 void printAllMember(memberList *list);		// È¸¿ø Á¶È¸ ÇÔ¼ö
 void registerMember(memberList *list);		// È¸¿ø °¡ÀÔ ÇÔ¼ö
 void changeMemberName(memberList *list);	// È¸¿ø ÀÌ¸§ º¯°æ ÇÔ¼ö
 void changeMemberID(memberList *list);		// È¸¿ø ¾ÆÀÌµğ º¯°æ ÇÔ¼ö
 void deleteMember(memberList *list);		// È¸¿ø »èÁ¦ ÇÔ¼ö
-void changePointOfMember(member *list);		// È¸¿ø Àû¸³ ÇÔ¼ö
+void changePointOfMember(member *list,int point);		// È¸¿ø Àû¸³ ÇÔ¼ö
 
 /* »óÇ° °ü¸®¿¡ ´ëÇÑ ÇÔ¼ö ¸ñ·Ï */
 
@@ -194,17 +207,7 @@ void loadSalesFromFile(memberList *list);	// È¸¿ø ¸ñ·Ï ºÒ·¯¿À±â
 void saveSalesToFile(memberList *list);		// È¸¿ø ¸ñ·Ï ÀúÀåÇÏ±â
 
 
-/* --------------------------*/
-/* ÀÎÅÍÆäÀÌ½º¿¡ ´ëÇÑ ÇÔ¼ö ¸ñ·Ï */
-/* --------------------------*/
 
-
-void printMainWindow();
-void printSelectMenu();
-void printMemberManageMenu();
-void printProductManageMenu();
-void printOrderManageMenu();
-void printSalesManageMenu();
 
 
 
@@ -251,8 +254,14 @@ int main()
 	addDataToMemberList(&member_list, 2, mdata2);
 	printMemberList(&member_list);
 	deleteDataFromMemberList(&member_list, 1);
+	registerMember(&member_list);
 	printMemberList(&member_list);
-
+	changeMemberName(&member_list);
+	printMemberList(&member_list);
+	changeMemberID(&member_list);
+	printMemberList(&member_list);
+	deleteMember(&member_list);
+	printMemberList(&member_list);
 	terminateMemberList(&member_list);
 
 	/*DEBUG_PRODUCT_LIST*/
@@ -289,6 +298,18 @@ int main()
 	return 0;
 }
 
+
+/* --------- */
+/* ÇÔ¼ö Á¤ÀÇ */
+/* --------- */
+
+
+/* ----------------------- */
+/* ¿¬°á¸®½ºÆ® °ü·Ã ÇÔ¼ö ¸ñ·Ï */
+/* ----------------------- */
+
+
+/* salesList ¿¡ ´ëÇÑ ÇÔ¼ö ¸ñ·Ï */
 
 salesNode* allocSalesNode()														// »õ ³ëµåÀÇ ÁÖ¼Ò¸¦ ¹İÈ¯ÇÏ´Â ÇÔ¼ö
 {
@@ -543,7 +564,7 @@ void terminateMemberList(memberList *list)											// ¸®½ºÆ®¿¡ ÇÒ´çµÈ °ø°£À» Ç
 
 
 
-/* »óÇ° ÇÔ¼ö*/
+/* productList ¿¡ ´ëÇÑ ÇÔ¼ö ¸ñ·Ï */
 
 
 productNode* allocProductNode()														// »õ ³ëµåÀÇ ÁÖ¼Ò¸¦ ¹İÈ¯ÇÏ´Â ÇÔ¼ö
@@ -671,5 +692,187 @@ void terminateProductList(productList *list)											// ¸®½ºÆ®¿¡ ÇÒ´çµÈ °ø°£À»
 }
 
 
+/* --------------------------*/
+/* ÀÎÅÍÆäÀÌ½º¿¡ ´ëÇÑ ÇÔ¼ö ¸ñ·Ï */
+/* --------------------------*/
 
 
+void printMainWindow();
+
+void printSelectMenu();
+
+void printMemberManageMenu();
+
+void printProductManageMenu();
+
+void printOrderManageMenu();
+
+void printSalesManageMenu();
+
+/* ------------------------ */
+/* ÁÖ¿ä ±â´É¿¡ ´ëÇÑ ÇÔ¼ö ¸ñ·Ï */
+/* ------------------------ */
+
+
+/* È¸¿ø °ü¸®¿¡ ´ëÇÑ ÇÔ¼ö ¸ñ·Ï */
+
+Index findIndexOfMemberByName(const memberList *list,const char name[])	//È¸¿ø ÀÌ¸§ °Ë»ö ÇÔ¼ö
+{
+	memberNode *ptr = list->head->next;												// ptrÀ» ¸Ç Ã³À½ °ª ³ëµå·Î ¼³Á¤
+	Index i=1;																	// i´Â 1ºÎÅÍ
+	if (!isEmptyMemberList(list))																// ºó ¸®½ºÆ®°¡ ¾Æ´Ï¸é ½ÇÇà
+	{
+		while (ptr->next != NULL)													// ¸®½ºÆ® ³¡±îÁö Å½»ö
+		{
+			if (strcmp(name, ptr->data.name) == 0)										// Ã£´Â ÀÌ¸§ÀÌ¸é
+			{
+				return i;															// ÇöÀç ÀÎµ¦½º ¹İÈ¯
+			}
+			ptr = ptr->next;														// ptrÀ» ´ÙÀ½ ³ëµå·Î		/*TODO µ¥ÀÌÅÍ Ãâ·Â Çü½Ä ¹Ù²ã¾ßÇÔ*/
+			i++;
+		}
+	}
+	return -1;			// Ã£Áö ¸øÇÏ¿´À»¶§
+}
+Index findIndexOfMemberById(const memberList *list, const char id[])	//È¸¿ø ¾ÆÀÌµğ °Ë»ö ÇÔ¼ö
+{
+	memberNode *ptr = list->head->next;												// ptrÀ» ¸Ç Ã³À½ °ª ³ëµå·Î ¼³Á¤
+	Index i = 1;																	// i´Â 1ºÎÅÍ
+	if (!isEmptyMemberList(list))																// ºó ¸®½ºÆ®°¡ ¾Æ´Ï¸é ½ÇÇà
+	{
+		while (ptr->next != NULL)													// ¸®½ºÆ® ³¡±îÁö Å½»ö
+		{
+			if (strcmp(id, ptr->data.id) == 0)										// Ã£´Â ¾ÆÀÌµğÀÌ¸é
+			{
+				return i;															// ÇöÀç ÀÎµ¦½º ¹İÈ¯
+			}
+			ptr = ptr->next;														// ptrÀ» ´ÙÀ½ ³ëµå·Î		/*TODO µ¥ÀÌÅÍ Ãâ·Â Çü½Ä ¹Ù²ã¾ßÇÔ*/
+			i++;
+		}
+	}
+	return -1;			// Ã£Áö ¸øÇÏ¿´À»¶§
+}
+void printAllMember(memberList *list)		// È¸¿ø Á¶È¸ ÇÔ¼ö
+{
+
+	printMemberList(list);
+}
+void registerMember(memberList *list)		// È¸¿ø °¡ÀÔ ÇÔ¼ö
+{
+	char new_name[11];					// »õ·Î¿î ÀÌ¸§ º¯¼ö
+	char new_id[12];					// »õ·Î¿î ÀüÈ­¹øÈ£ º¯¼ö
+	int new_point=0;					// »õ·Î¿î Æ÷ÀÎÆ® º¯¼ö 
+
+	printf("È¸¿ø°¡ÀÔ\n");				//TODO °¡ÀÔ ÀÎÅÍÆäÀÌ½º ¸¸µé±â
+
+	printf("ÀÌ¸§À» ÀÔ·ÂÇØÁÖ¼¼¿ä. (¿µ¹®10ÀÚ ÀÌ³») :");				// ÀÌ¸§ ÀÔ·Â ¾È³»
+	scanf("%s", new_name);										// ÀÌ¸§ ÀÔ·Â
+	printf("ÀüÈ­¹øÈ£¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä. (ex.01012345678) :");		// ÀüÈ­¹øÈ£ ÀÔ·Â ¾È³»
+	scanf("%s", new_id);										// ÀüÈ­¹øÈ£ ÀÔ·Â
+
+	member new_member = { "tmp","tmp",new_point };				// »õ·Î¿î  È¸¿ø ±¸Á¶Ã¼ »ı¼º
+	strcpy(new_member.name, new_name);							// ÀÌ¸§À» ´ëÀÔ
+	strcpy(new_member.id, new_id);								// ÀüÈ­¹øÈ£¸¦ ´ëÀÔ
+
+
+	addDataToMemberList(list, 1, new_member);					// »õ·Î¿î È¸¿øÀ» ¸®½ºÆ®¿¡ ¸Ç ¾Õ¿¡ Ãß°¡
+	
+	printf("°¡ÀÔ ¿Ï·á !!\n");									// °¡ÀÔ ¿Ï·á ¸Ş½ÃÁö
+}
+void changeMemberName(memberList *list)	// È¸¿ø ÀÌ¸§ º¯°æ ÇÔ¼ö
+{
+	char find_name[11];
+	char new_name[11];
+
+	Index find_name_idx;
+
+	printf("Ã£´Â ÀÌ¸§À» ÀÔ·ÂÇØÁÖ¼¼¿ä. (¿µ¹®10ÀÚ ÀÌ³») :");				// ÀÌ¸§ ÀÔ·Â ¾È³»
+	scanf("%s", find_name);										// ÀÌ¸§ ÀÔ·Â
+
+	find_name_idx = findIndexOfMemberByName(list, find_name);
+	
+	if (find_name_idx == -1)										// ÀÌ¸§ÀÌ ¾øÀ»¶§ Ã³¸®
+	{
+		printf("ÀÌ¸§À» Ã£Áö ¸øÇÏ¿´½À´Ï´Ù.\n");						// ¿À·ù ¸Ş½ÃÁö Ãâ·Â
+		return;														// ÇÔ¼ö ºñÁ¤»ó Á¾·á
+	}
+
+	setCurrentMemberNode(list, find_name_idx);
+
+	printf("ÀÌ¸§À» Ã£¾Ò½À´Ï´Ù!\n");
+	printf("È¸¿ø Á¤º¸\n%s %s %d\n", list->crnt->data.name, list->crnt->data.id, list->crnt->data.point);		// Ã£Àº È¸¿ø Á¤º¸Ãâ·Â
+
+	printf("¹Ù²Ü ÀÌ¸§À» ÀÔ·ÂÇØÁÖ¼¼¿ä. (¿µ¹®10ÀÚ ÀÌ³») :");				// ÀÌ¸§ ÀÔ·Â ¾È³»
+	scanf("%s", new_name);											// »õ ÀÌ¸§ ÀÔ·Â 
+
+	strcpy(list->crnt->data.name, new_name);					// »õÀÌ¸§À» ±âÁ¸ÀÌ¸§¿¡ µ¤¾î¾²±â
+
+	printf("º¯°æ ¿Ï·á !!\n");									// ¿Ï·á ¸Ş½ÃÁö Ãâ·Â 
+
+}
+void changeMemberID(memberList *list)	// È¸¿ø ¾ÆÀÌµğ º¯°æ ÇÔ¼ö
+{
+	char find_id[12];
+	char new_id[12];
+
+	Index find_id_idx;
+
+	printf("Ã£´Â ¾ÆÀÌµğÀ» ÀÔ·ÂÇØÁÖ¼¼¿ä. (ex.01012345678) :");				// ÀÌ¸§ ÀÔ·Â ¾È³»
+	scanf("%s", find_id);										// ÀÌ¸§ ÀÔ·Â
+
+	find_id_idx = findIndexOfMemberById(list, find_id);
+
+	if (find_id_idx == -1)										// ÀÌ¸§ÀÌ ¾øÀ»¶§ Ã³¸®
+	{
+		printf("¾ÆÀÌµğÀ» Ã£Áö ¸øÇÏ¿´½À´Ï´Ù.\n");						// ¿À·ù ¸Ş½ÃÁö Ãâ·Â
+		return;														// ÇÔ¼ö ºñÁ¤»ó Á¾·á
+	}
+
+	setCurrentMemberNode(list, find_id_idx);
+
+	printf("¾ÆÀÌµğÀ» Ã£¾Ò½À´Ï´Ù!\n");
+	printf("È¸¿ø Á¤º¸\n%s %s %d\n", list->crnt->data.name, list->crnt->data.id, list->crnt->data.point);		// Ã£Àº È¸¿ø Á¤º¸Ãâ·Â
+
+	printf("¹Ù²Ü ¾ÆÀÌµğÀ» ÀÔ·ÂÇØÁÖ¼¼¿ä. (ex.01012345678) :");				// ÀÌ¸§ ÀÔ·Â ¾È³»
+	scanf("%s", new_id);											// »õ ÀÌ¸§ ÀÔ·Â 
+
+	strcpy(list->crnt->data.id, new_id);					// »õÀÌ¸§À» ±âÁ¸ÀÌ¸§¿¡ µ¤¾î¾²±â
+
+	printf("º¯°æ ¿Ï·á !!\n");									// ¿Ï·á ¸Ş½ÃÁö Ãâ·Â 
+}
+void deleteMember(memberList *list)		// È¸¿ø »èÁ¦ ÇÔ¼ö
+{
+	char find_name[11];
+	char del_mem;
+
+	Index find_name_idx;
+
+	printf("»èÁ¦ÇÒ È¸¿øÀÇ ÀÌ¸§À» ÀÔ·ÂÇØÁÖ¼¼¿ä. (¿µ¹®10ÀÚ ÀÌ³») :");				// ÀÌ¸§ ÀÔ·Â ¾È³»
+	scanf("%s", find_name);										// ÀÌ¸§ ÀÔ·Â
+
+	find_name_idx = findIndexOfMemberByName(list, find_name);
+
+	if (find_name_idx == -1)										// ÀÌ¸§ÀÌ ¾øÀ»¶§ Ã³¸®
+	{
+		printf("ÀÌ¸§À» Ã£Áö ¸øÇÏ¿´½À´Ï´Ù.\n");						// ¿À·ù ¸Ş½ÃÁö Ãâ·Â
+		return;														// ÇÔ¼ö ºñÁ¤»ó Á¾·á
+	}
+
+	printf("»èÁ¦ÇÏ½Ã°Ú½À´Ï±î? [Y:N] :");
+	getchar();
+	scanf("%c", &del_mem);
+
+	if (del_mem == 'N' || del_mem == 'n')
+	{
+		printf("»èÁ¦¸¦ Ãë¼ÒÇÏ¼Ì½À´Ï´Ù.\n");
+		return;
+	}
+
+	deleteDataFromMemberList(list, find_name_idx);
+
+	printf("»èÁ¦ ¿Ï·á!!\n");
+}
+void changePointOfMember(member *list,int point)		// È¸¿ø Àû¸³ ÇÔ¼ö
+{
+
+}
