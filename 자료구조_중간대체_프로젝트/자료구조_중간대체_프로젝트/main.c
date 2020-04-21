@@ -174,7 +174,7 @@ void deleteMember(memberList *list);		// 회원 삭제 함수
 void changePointOfMember(member *list,int point);		// 회원 적립 함수
 
 /* 상품 관리에 대한 함수 목록 */
-
+Index findIndexOfProduct(const productList *list, const char name[]);	//이름으로 상품 찾는 함수
 void addProduct(productList *list);			// 상품 추가 함수
 void deleteProduct(productList *list);		// 상품 삭제 함수
 void changeProductPrice(productList *list); // 상품 가격 변경 함수
@@ -249,6 +249,7 @@ int main()
 	sales sdata2 = { "20200420",40000 };
 
 	/*DEBUG_MEMBER_LIST*/
+	/*
 	initializeMemberList(&member_list);
 	addDataToMemberList(&member_list, 1, mdata1);
 	addDataToMemberList(&member_list, 2, mdata2);
@@ -263,9 +264,9 @@ int main()
 	deleteMember(&member_list);
 	printMemberList(&member_list);
 	terminateMemberList(&member_list);
-
+	*/
 	/*DEBUG_PRODUCT_LIST*/
-
+	
 
 	initializeProductList(&product_list);
 	addDataToProductList(&product_list, 1, pdata1);
@@ -273,10 +274,16 @@ int main()
 	printProductList(&product_list);
 	deleteDataFromProductList(&product_list, 1);
 	printProductList(&product_list);
-
+	addProduct(&product_list);
+	printProductList(&product_list);
+	changeProductPrice(&product_list);
+	printProductList(&product_list);
+	deleteProduct(&product_list);
+	printProductList(&product_list);
 	terminateProductList(&product_list);
 
 	/*DEBUG_MEMBER_LIST*/
+	/*
 	initializeSalesList(&sales_list);
 	addDataToSalesList(&sales_list, 1, sdata1);
 	addDataToSalesList(&sales_list, 2, sdata2);
@@ -285,7 +292,7 @@ int main()
 	printSalesList(&sales_list);
 
 	terminateSalesList(&sales_list);
-
+	*/
 	return 0;
 
 
@@ -858,6 +865,10 @@ void deleteMember(memberList *list)		// 회원 삭제 함수
 		return;														// 함수 비정상 종료
 	}
 
+	setCurrentMemberNode(list, find_name_idx);
+
+	printf("아이디을 찾았습니다!\n");
+	printf("회원 정보\n%s %s %d\n", list->crnt->data.name, list->crnt->data.id, list->crnt->data.point);		// 찾은 회원 정보출력
 	printf("삭제하시겠습니까? [Y:N] :");
 	getchar();
 	scanf("%c", &del_mem);
@@ -876,3 +887,146 @@ void changePointOfMember(member *list,int point)		// 회원 적립 함수
 {
 
 }
+
+/* 상품 관리에 대한 함수 목록 */
+
+Index findIndexOfProduct(const productList *list, const char name[])	//이름으로 상품 찾는 함수
+{
+	productNode *ptr = list->head->next;												// ptr을 맨 처음 값 노드로 설정
+	Index i = 1;																	// i는 1부터
+	if (!isEmptyProductList(list))																// 빈 리스트가 아니면 실행
+	{
+		while (ptr->next != NULL)													// 리스트 끝까지 탐색
+		{
+			if (strcmp(name, ptr->data.name) == 0)										// 찾는 이름이면
+			{
+				return i;															// 현재 인덱스 반환
+			}
+			ptr = ptr->next;														// ptr을 다음 노드로		/*TODO 데이터 출력 형식 바꿔야함*/
+			i++;
+		}
+	}
+	return -1;			// 찾지 못하였을때
+}
+void addProduct(productList *list)			// 상품 추가 함수
+{
+	char product_name[21] = { "\0" };
+	int product_price = 0;
+
+	printf("상품추가\n");				//TODO 가입 인터페이스 만들기
+
+	printf("추가할 상품의 이름을 입력해주세요. (영문자 20자이내) :");
+	scanf("%s", product_name);
+	printf("추가할 상품의 가격을 입력해주세요.(원) :");
+	scanf("%d", &product_price);
+
+	product new_product = { "tmp",product_price,0 };
+	strcpy(new_product.name, product_name);
+	
+	addDataToProductList(list, 1, new_product);
+	printf("추가 완료 !!\n");
+
+}
+void deleteProduct(productList *list)		// 상품 삭제 함수
+{
+	char product_name[21] = { "\0" };
+	int product_price = 0;
+	char del_product;
+	Index find_product_idx;
+
+	printf("상품 삭제\n");				//TODO 가입 인터페이스 만들기
+
+	printf("삭제 상품의 이름을 입력해주세요. (영문자 20자이내) :");
+	scanf("%s", product_name);
+	find_product_idx = findIndexOfProduct(list, product_name);
+
+	if (find_product_idx == -1)
+	{
+		printf("상품을 찾지 못하였습니다.\n");
+		return;
+	}
+	setCurrentProductNode(list, find_product_idx);
+	printf("상품을 찾았습니다!\n");
+	printf("상품 정보\n%s %d %d\n", list->crnt->data.name, list->crnt->data.price, list->crnt->data.sellCnt);		// 찾은 상품 정보출력
+	
+
+	printf("삭제하시겠습니까? [Y:N] :");
+	getchar();
+	scanf("%c", &del_product);
+
+	if (del_product == 'N' || del_product == 'n')
+	{
+		printf("삭제를 취소하셨습니다.\n");
+		return;
+	}
+
+	deleteDataFromProductList(list, find_product_idx);
+
+	printf("삭제 완료 !!\n");
+
+}
+void changeProductPrice(productList *list) // 상품 가격 변경 함수
+{
+	char product_name[21] = { "\0" };
+	int new_price = 0;
+	char change_product;
+	Index find_product_idx;
+
+	printf("상품 가격 변경\n");				//TODO 가입 인터페이스 만들기
+
+	printf("가격을 변경할 상품의 이름을 입력해주세요. (영문자 20자이내) :");
+	scanf("%s", product_name);
+	find_product_idx = findIndexOfProduct(list, product_name);
+
+	if (find_product_idx == -1)
+	{
+		printf("상품을 찾지 못하였습니다.\n");
+		return;
+	}
+
+	setCurrentProductNode(list, find_product_idx);
+	printf("상품을 찾았습니다!\n");
+	printf("상품 정보\n%s %d %d\n", list->crnt->data.name, list->crnt->data.price, list->crnt->data.sellCnt);		// 찾은 상품 정보출력
+	printf("변경 하시겠습니까? [Y:N] :");
+	getchar();
+	scanf("%c", &change_product);
+
+	if (change_product == 'N' || change_product == 'n')
+	{
+		printf("변경을 취소하셨습니다.\n");
+		return;
+	}
+
+	printf("새로운 가격을 입력해주세요.(원) :");
+	scanf("%d", &new_price);
+
+	list->crnt->data.price = new_price;
+
+	printf("변경 완료 !!\n");
+
+
+}
+void printAllProduct(productList *list)    // 모든 상품 출력 함수
+{
+	printProductList(list);
+}
+
+/* 주문 관리에 대한 함수 목록 */
+
+void orderProduct(productList *prodictlist, salesList *saleslist, memberList *memberlist)	// 상품 주문 함수
+{
+
+
+
+}
+void cancelOrder(productList *prodictlist, salesList *saleslist, memberList *memberlist)   // 상품 주문 취소 함수
+{
+
+
+
+}
+/* 매출 관리에 대한 함수 목록 */
+
+void printAllSales(salesList *list);		// 총 매출 출력 함수
+void printSalesByDates(salesList *list);    // 날짜 별 매출 출력 함수 
+void printSalesByProduct(salesList *saleslist, productList *productlist);					// 상품 별 매출 출력 함수
