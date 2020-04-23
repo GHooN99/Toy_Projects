@@ -8,6 +8,15 @@
 #define true 1
 #define false 0
 
+enum main_menu
+{
+	EXIT = 0,
+	MEMBER_MANAGE,
+	PRODUCT_MANAGE,
+	ORDER_MANAGE,
+	SALES_MANAGE
+};
+
 typedef int bool;
 typedef int Index;
 
@@ -228,10 +237,11 @@ void saveSalesToFile(memberList *list);		// 회원 목록 저장하기
 /* 메인 함수 */
 /* -------- */
 
-#define DEBUG
+//#define DEBUG
 
 int main()
 {
+	
 	
 #ifdef DEBUG
 
@@ -298,11 +308,38 @@ int main()
 
 #endif // DEBUG
 
-	//printMainWindow(); // 메인 윈도우 오픈 
+	enum main_menu menu;
+
+	printMainWindow(); // 메인 윈도우 오픈 
+
+	while (true)
+	{
+		printSelectMenu(); // 메뉴 선택 
+
+		scanf("%d",(int*)&menu);
+		system("cls");
+		switch (menu)
+		{
+			case MEMBER_MANAGE:
+				break;
+
+			case EXIT:
+				return 0;
 
 
 
-	return 0;
+
+
+
+			default:
+				break;
+		}
+
+
+
+	}
+
+
 }
 
 
@@ -703,10 +740,22 @@ void terminateProductList(productList *list)											// 리스트에 할당된 공간을
 /* 인터페이스에 대한 함수 목록 */
 /* --------------------------*/
 
+void printMainWindow()
+{
+	printf("___________________**************___________________\n");
+	printf("___________________카페관리 시스템___________________\n");
+	printf("___________________**************___________________\n");
+	printf("\n계속하려면 Enter를 누르십시오");
+	getchar();
+	system("cls");
+}
 
-void printMainWindow();
+void printSelectMenu()
+{
+	printf("(1)회원관리 (2)상품관리 (3)주문관리 (4)매출관리 (0)종료\n");
+	printf("메뉴를 선택해주세요 : ");
 
-void printSelectMenu();
+}
 
 void printMemberManageMenu();
 
