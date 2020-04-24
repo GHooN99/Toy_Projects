@@ -16,6 +16,15 @@ enum main_menu
 	ORDER_MANAGE,
 	SALES_MANAGE
 };
+enum member_menu
+{
+	EXIT_MEMBER_MENU = 0,
+	PRINT_MEMBER,
+	CHANGE_NAME,
+	CHANGE_ID,
+	DELETE_MEMBER
+};
+
 
 typedef int bool;
 typedef int Index;
@@ -158,14 +167,14 @@ void terminateProductList(productList *list);											// 리스트에 할당된 공간�
 /* --------------------------*/
 /* 인터페이스에 대한 함수 목록 */
 /* --------------------------*/
-
-
+void keyPressDelay();
+void printInputError();
 void printMainWindow();
 void printSelectMenu();
-void printMemberManageMenu();
-void printProductManageMenu();
-void printOrderManageMenu();
-void printSalesManageMenu();
+void MemberManageMenu();
+void ProductManageMenu();
+void OrderManageMenu();
+void SalesManageMenu();
 
 /* ------------------------ */
 /* 주요 기능에 대한 함수 목록 */
@@ -239,6 +248,8 @@ void saveSalesToFile(memberList *list);		// 회원 목록 저장하기
 
 //#define DEBUG
 
+#define DEBUG_IF
+
 int main()
 {
 	
@@ -308,6 +319,23 @@ int main()
 
 #endif // DEBUG
 
+#ifdef DEBUG_IF
+
+	/* 멤버 사전 데이터 삽입 */
+	memberList member_list;
+	salesList sales_list;
+	productList product_list;
+
+	member mdata1 = { "Kim","01012345678",1000 };
+	member mdata2 = { "Lee","01099999999",2000 };
+
+	initializeMemberList(&member_list);
+	addDataToMemberList(&member_list, 1, mdata1);
+	addDataToMemberList(&member_list, 2, mdata2);
+
+	/* 멤버 사전 데이터 삽입 끝 */
+
+
 	enum main_menu menu;
 
 	printMainWindow(); // 메인 윈도우 오픈 
@@ -318,26 +346,37 @@ int main()
 
 		scanf("%d",(int*)&menu);
 		system("cls");
+
 		switch (menu)
 		{
 			case MEMBER_MANAGE:
+				MemberManageMenu(&member_list);
+				break;
+			case PRODUCT_MANAGE:
+
+				break;
+			case ORDER_MANAGE:
+
+				break;
+			case SALES_MANAGE:
+
 				break;
 
 			case EXIT:
+				terminateMemberList(&member_list);
 				return 0;
 
 
-
-
-
-
 			default:
+				printInputError();
 				break;
 		}
 
 
 
 	}
+
+#endif
 
 
 }
@@ -740,13 +779,21 @@ void terminateProductList(productList *list)											// 리스트에 할당된 공간을
 /* 인터페이스에 대한 함수 목록 */
 /* --------------------------*/
 
+void keyPressDelay()
+{
+	system("pause");
+	system("cls");
+}
+void printInputError()
+{
+	printf("잘못된 입력입니다.\n");
+}
 void printMainWindow()
 {
 	printf("___________________**************___________________\n");
 	printf("___________________카페관리 시스템___________________\n");
 	printf("___________________**************___________________\n");
-	printf("\n계속하려면 Enter를 누르십시오");
-	getchar();
+	system("pause");
 	system("cls");
 }
 
@@ -754,16 +801,56 @@ void printSelectMenu()
 {
 	printf("(1)회원관리 (2)상품관리 (3)주문관리 (4)매출관리 (0)종료\n");
 	printf("메뉴를 선택해주세요 : ");
+}
+
+void MemberManageMenu(memberList *list)
+{
+	enum member_menu menu;
+
+	while (true)
+	{
+		printf("(1)회원조회 (2)회원이름변경 (3)회원아이디변경 (4)회원삭제 (0)처음으로\n");
+		printf("메뉴를 선택해주세요 : ");
+		scanf("%d", (int*)&menu);
+		system("cls");
+		switch (menu)
+		{
+			case PRINT_MEMBER:
+				printAllMember(list);
+				break;
+			case CHANGE_NAME:
+				changeMemberName(list);
+				break;
+			case CHANGE_ID:
+				changeMemberID(list);
+				break;
+			case DELETE_MEMBER:
+				deleteMember(list);
+				break;
+			case EXIT_MEMBER_MENU:
+				system("cls");
+				return;
+			default:
+				printInputError();
+				break;
+		}
+	}
+}
+
+void ProductManageMenu()
+{
+	
+}
+
+void OrderManageMenu()
+{
 
 }
 
-void printMemberManageMenu();
+void SalesManageMenu()
+{
 
-void printProductManageMenu();
-
-void printOrderManageMenu();
-
-void printSalesManageMenu();
+}
 
 /* ------------------------ */
 /* 주요 기능에 대한 함수 목록 */
@@ -810,8 +897,8 @@ Index findIndexOfMemberById(const memberList *list, const char id[])	//회원 아이
 }
 void printAllMember(memberList *list)		// 회원 조회 함수
 {
-
 	printMemberList(list);
+	keyPressDelay();
 }
 void registerMember(memberList *list)		// 회원 가입 함수
 {
@@ -834,6 +921,8 @@ void registerMember(memberList *list)		// 회원 가입 함수
 	addDataToMemberList(list, 1, new_member);					// 새로운 회원을 리스트에 맨 앞에 추가
 	
 	printf("가입 완료 !!\n");									// 가입 완료 메시지
+
+	keyPressDelay();
 }
 void changeMemberName(memberList *list)	// 회원 이름 변경 함수
 {
@@ -851,6 +940,8 @@ void changeMemberName(memberList *list)	// 회원 이름 변경 함수
 	{
 		printf("이름을 찾지 못하였습니다.\n");						// 오류 메시지 출력
 		return;														// 함수 비정상 종료
+
+		keyPressDelay();
 	}
 
 	setCurrentMemberNode(list, find_name_idx);
@@ -864,6 +955,8 @@ void changeMemberName(memberList *list)	// 회원 이름 변경 함수
 	strcpy(list->crnt->data.name, new_name);					// 새이름을 기존이름에 덮어쓰기
 
 	printf("변경 완료 !!\n");									// 완료 메시지 출력 
+
+	keyPressDelay();
 
 }
 void changeMemberID(memberList *list)	// 회원 아이디 변경 함수
@@ -881,6 +974,7 @@ void changeMemberID(memberList *list)	// 회원 아이디 변경 함수
 	if (find_id_idx == -1)										// 이름이 없을때 처리
 	{
 		printf("아이디을 찾지 못하였습니다.\n");						// 오류 메시지 출력
+		keyPressDelay();
 		return;														// 함수 비정상 종료
 	}
 
@@ -895,6 +989,8 @@ void changeMemberID(memberList *list)	// 회원 아이디 변경 함수
 	strcpy(list->crnt->data.id, new_id);					// 새이름을 기존이름에 덮어쓰기
 
 	printf("변경 완료 !!\n");									// 완료 메시지 출력 
+
+	keyPressDelay();
 }
 void deleteMember(memberList *list)		// 회원 삭제 함수
 {
@@ -911,6 +1007,8 @@ void deleteMember(memberList *list)		// 회원 삭제 함수
 	if (find_name_idx == -1)										// 이름이 없을때 처리
 	{
 		printf("이름을 찾지 못하였습니다.\n");						// 오류 메시지 출력
+
+		keyPressDelay();
 		return;														// 함수 비정상 종료
 	}
 
@@ -925,12 +1023,15 @@ void deleteMember(memberList *list)		// 회원 삭제 함수
 	if (del_mem == 'N' || del_mem == 'n')
 	{
 		printf("삭제를 취소하셨습니다.\n");
+		keyPressDelay();
 		return;
 	}
 
 	deleteDataFromMemberList(list, find_name_idx);
 
 	printf("삭제 완료!!\n");
+
+	keyPressDelay();
 }
 void changePointOfMember(member *list,int point)		// 회원 적립 함수
 {
