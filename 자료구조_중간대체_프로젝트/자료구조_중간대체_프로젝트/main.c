@@ -24,6 +24,14 @@ enum member_menu
 	CHANGE_ID,
 	DELETE_MEMBER
 };
+enum product_menu
+{
+	EXIT_PRODUCT_MENU = 0,
+	PRINT_PRODUCT,
+	ADD_PRODUCT,
+	CHANGE_PRICE,
+	DELETE_PRODUCT
+};
 
 
 typedef int bool;
@@ -171,9 +179,9 @@ void keyPressDelay();
 void printInputError();
 void printMainWindow();
 void printSelectMenu();
-void MemberManageMenu();
-void ProductManageMenu();
-void OrderManageMenu();
+void MemberManageMenu(memberList *list);
+void ProductManageMenu(productList *list);
+void OrderManageMenu(productList *pro_list, memberList *mem_list, salesList *sales_list);
 void SalesManageMenu();
 
 /* ------------------------ */
@@ -189,7 +197,7 @@ void registerMember(memberList *list);		// 회원 가입 함수
 void changeMemberName(memberList *list);	// 회원 이름 변경 함수
 void changeMemberID(memberList *list);		// 회원 아이디 변경 함수
 void deleteMember(memberList *list);		// 회원 삭제 함수
-void changePointOfMember(member *list,int point);		// 회원 적립 함수
+void changePointOfMember(memberList *list,int point);		// 회원 적립 함수
 
 /* 상품 관리에 대한 함수 목록 */
 Index findIndexOfProduct(const productList *list, const char name[]);	//이름으로 상품 찾는 함수
@@ -223,23 +231,6 @@ void saveProductToFile(memberList *list);	// 상품 목록 저장하기
 
 void loadSalesFromFile(memberList *list);	// 회원 목록 불러오기
 void saveSalesToFile(memberList *list);		// 회원 목록 저장하기
-
-
-
-
-
-
-
-
-/* ------------------ */
-/* 기타 필요 함수 목록 */
-/* ------------------ */
-
-
-
-
-
-
 
 
 /* -------- */
@@ -334,7 +325,22 @@ int main()
 	addDataToMemberList(&member_list, 2, mdata2);
 
 	/* 멤버 사전 데이터 삽입 끝 */
+	/* 상품 사전 데이터 삽입*/
 
+	product pdata1 = { "Coffee",4000,0 };
+	product pdata2 = { "Cake",2000,2 };
+
+	initializeProductList(&product_list);
+	addDataToProductList(&product_list, 1, pdata1);
+	addDataToProductList(&product_list, 2, pdata2);
+	
+	/* 상품 사전 데이터 삽입 끝 */
+	sales sdata1 = { "20200419",15000 };
+	sales sdata2 = { "20200420",40000 };
+	initializeSalesList(&sales_list);
+	addDataToSalesList(&sales_list, 1, sdata1);
+	addDataToSalesList(&sales_list, 2, sdata2);
+	
 
 	enum main_menu menu;
 
@@ -353,10 +359,10 @@ int main()
 				MemberManageMenu(&member_list);
 				break;
 			case PRODUCT_MANAGE:
-
+				ProductManageMenu(&product_list);
 				break;
 			case ORDER_MANAGE:
-
+				OrderManageMenu(&product_list, &member_list, &sales_list);
 				break;
 			case SALES_MANAGE:
 
@@ -364,6 +370,8 @@ int main()
 
 			case EXIT:
 				terminateMemberList(&member_list);
+				terminateSalesList(&sales_list);
+				terminateProductList(&product_list);
 				return 0;
 
 
@@ -787,14 +795,14 @@ void keyPressDelay()
 void printInputError()
 {
 	printf("잘못된 입력입니다.\n");
+	keyPressDelay();
 }
 void printMainWindow()
 {
 	printf("___________________**************___________________\n");
 	printf("___________________카페관리 시스템___________________\n");
 	printf("___________________**************___________________\n");
-	system("pause");
-	system("cls");
+	keyPressDelay();
 }
 
 void printSelectMenu()
@@ -837,14 +845,44 @@ void MemberManageMenu(memberList *list)
 	}
 }
 
-void ProductManageMenu()
+void ProductManageMenu(productList *list)
 {
-	
+	enum product_menu menu;
+	while (true)
+	{
+		printf("(1)상품조회 (2)상품추가 (3)상품가격변경 (4)상품삭제 (0)처음으로\n");
+		printf("메뉴를 선택해주세요 : ");
+		scanf("%d", (int*)&menu);
+		system("cls");
+
+		switch (menu)
+		{
+			case PRINT_PRODUCT:
+				printAllProduct(list);
+				break;
+			case ADD_PRODUCT:
+				addProduct(list);
+				break;
+			case CHANGE_PRICE:
+				changeProductPrice(list);
+				break;
+			case DELETE_PRODUCT:
+				deleteProduct(list);
+				break;
+			case EXIT_PRODUCT_MENU:
+				system("cls");
+				return;
+			default:
+				printInputError();
+				break;
+		}
+	}
 }
 
-void OrderManageMenu()
-{
 
+void OrderManageMenu(productList *pro_list,memberList *mem_list,salesList *sales_list)
+{
+	orderProduct(pro_list, sales_list, mem_list);
 }
 
 void SalesManageMenu()
@@ -1033,9 +1071,41 @@ void deleteMember(memberList *list)		// 회원 삭제 함수
 
 	keyPressDelay();
 }
-void changePointOfMember(member *list,int point)		// 회원 적립 함수
+void changePointOfMember(memberList *list,int point)		// 회원 적립 함수
 {
+	Index find_name_idx;
+	char find_name[11],regi;
 
+	printf("회원 이름을 입력해주세요. (영문10자 이내) :");				// 이름 입력 안내
+	scanf("%s", find_name);										// 이름 입력
+
+	find_name_idx = findIndexOfMemberByName(list, find_name);
+
+	if (find_name_idx == -1)										// 이름이 없을때 처리
+	{
+		printf("이름을 찾지 못하였습니다.\n");						// 오류 메시지 출력
+		printf("회원 가입을 하시겠습니까?[Y:N] :");
+		getchar();
+		scanf("%c", &regi);
+
+		if (regi == 'N' || regi == 'n')
+		{
+			printf("회원 가입을 취소하셨습니다.\n");
+			keyPressDelay();
+			return;
+		}
+		registerMember(list);
+		return;
+	}
+
+
+	setCurrentMemberNode(list, find_name_idx);
+
+	printf("이름을 찾았습니다!\n");
+	printf("%d 포인트가 적립되었습니다.\n", point);
+	list->crnt->data.point += point;
+	printf("회원 정보\n%s %s %d\n", list->crnt->data.name, list->crnt->data.id, list->crnt->data.point);
+	keyPressDelay();
 }
 
 /* 상품 관리에 대한 함수 목록 */
@@ -1075,7 +1145,7 @@ void addProduct(productList *list)			// 상품 추가 함수
 	
 	addDataToProductList(list, 1, new_product);
 	printf("추가 완료 !!\n");
-
+	keyPressDelay();
 }
 void deleteProduct(productList *list)		// 상품 삭제 함수
 {
@@ -1093,6 +1163,7 @@ void deleteProduct(productList *list)		// 상품 삭제 함수
 	if (find_product_idx == -1)
 	{
 		printf("상품을 찾지 못하였습니다.\n");
+		keyPressDelay();
 		return;
 	}
 	setCurrentProductNode(list, find_product_idx);
@@ -1107,12 +1178,14 @@ void deleteProduct(productList *list)		// 상품 삭제 함수
 	if (del_product == 'N' || del_product == 'n')
 	{
 		printf("삭제를 취소하셨습니다.\n");
+		keyPressDelay();
 		return;
 	}
 
 	deleteDataFromProductList(list, find_product_idx);
 
 	printf("삭제 완료 !!\n");
+	keyPressDelay();
 
 }
 void changeProductPrice(productList *list) // 상품 가격 변경 함수
@@ -1131,6 +1204,7 @@ void changeProductPrice(productList *list) // 상품 가격 변경 함수
 	if (find_product_idx == -1)
 	{
 		printf("상품을 찾지 못하였습니다.\n");
+		keyPressDelay();
 		return;
 	}
 
@@ -1144,6 +1218,7 @@ void changeProductPrice(productList *list) // 상품 가격 변경 함수
 	if (change_product == 'N' || change_product == 'n')
 	{
 		printf("변경을 취소하셨습니다.\n");
+		keyPressDelay();
 		return;
 	}
 
@@ -1154,18 +1229,77 @@ void changeProductPrice(productList *list) // 상품 가격 변경 함수
 
 	printf("변경 완료 !!\n");
 
-
+	keyPressDelay();
 }
 void printAllProduct(productList *list)    // 모든 상품 출력 함수
 {
 	printProductList(list);
+	keyPressDelay();
 }
 
 /* 주문 관리에 대한 함수 목록 */
 
-void orderProduct(productList *prodictlist, salesList *saleslist, memberList *memberlist)	// 상품 주문 함수
+void orderProduct(productList *pro_list, salesList *sales_list, memberList *mem_list)	// 상품 주문 함수
 {
+	Index idx;
+	int k;
+	char order, checkpoint;
+	while (true)
+	{
+		printProductList(pro_list);
+		printf("무엇을 주문하시겠습니까? (0)처음으로\n");
+		printf("(위에서부터 1번) 메뉴를 선택해주세요 : ");
+		scanf("%d", &idx);
+		system("cls");
+		if (idx == 0)
+			return;
+		if (idx > sizeOfProductList(pro_list))
+		{
+			printf("잘못된 입력입니다.\n");
+			keyPressDelay();
+			continue;
+		}
 
+		setCurrentProductNode(pro_list, idx);
+		product buy_product;
+		buy_product = getDataFromProductList(pro_list, idx);
+
+		printf("상품정보\n");
+		printf("%s %d원\n", buy_product.name, buy_product.price);
+
+		printf("몇개를 주문하시겠습니까? :");
+		scanf("%d", &k);
+		system("cls");
+
+		printf("%s %d개를 주문 하셨습니다. 가격은 %d 입니다.\n", buy_product.name, k, k*buy_product.price);
+		printf("주문하시겠습니까? [Y:N] :");
+		getchar();
+		scanf("%c", &order);
+
+		if (order == 'N' || order == 'n')
+		{
+			printf("주문을 취소하셨습니다.\n");
+			keyPressDelay();
+			continue;
+		}
+
+		pro_list->crnt->data.sellCnt += k;
+		printf("주문 완료!!\n");
+
+		printf("적립 포인트는 %d포인트 입니다.", (int)(k*buy_product.price*0.05));
+		printf("적립하시겠습니까? [Y:N] :");
+		getchar();
+		scanf("%c", &checkpoint);
+		system("cls");
+		if (checkpoint == 'N' || checkpoint == 'n')
+		{
+			printf("적립을 취소하셨습니다.\n");
+			keyPressDelay();
+			continue;
+		}
+
+		changePointOfMember(mem_list, (int)(k*buy_product.price*0.05));
+	}
 
 
 }
