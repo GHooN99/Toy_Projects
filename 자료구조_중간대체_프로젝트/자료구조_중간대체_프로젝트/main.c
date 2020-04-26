@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <Windows.h>
 
-
 #define true 1
 #define false 0
 
@@ -32,22 +31,21 @@ enum product_menu
 	CHANGE_PRICE,
 	DELETE_PRODUCT
 };
-
+enum sales_menu
+{
+	EXIT_SALES_MENU =0,
+	PRINT_ALL,
+	PRINT_BY_PRODUCT
+};
 
 typedef int bool;
 typedef int Index;
 
 
-/* ------------------------------ */
-/* ¸ÅÃâ È¸¿ø »óÇ° µ¥ÀÌÅÍ ±¸Á¶Ã¼ Á¤ÀÇ */
-/* ------------------------------ */
+/* ---------------------------- */
+/*  È¸¿ø »óÇ° µ¥ÀÌÅÍ ±¸Á¶Ã¼ Á¤ÀÇ */
+/* ---------------------------- */
 
-
-typedef struct sales	//¸ÅÃâ ±¸Á¶Ã¼ Á¤ÀÇ
-{
-	char date[9];		//20200413 8ÀÚ¸® ¹®ÀÚ¿­
-	int todaySales;		//´çÀÏ ¸ÅÃâ
-}sales;
 
 typedef struct member	//È¸¿ø ±¸Á¶Ã¼ Á¤ÀÇ
 {
@@ -69,14 +67,6 @@ typedef struct product	//»óÇ° ±¸Á¶Ã¼ Á¤ÀÇ
 /* ¿¬°á¸®½ºÆ® Á¤ÀÇ¸¦ À§ÇÑ ³ëµå ¼³Á¤ */
 /* ------------------------------ */
 
-
-typedef struct salesNode		//¸ÅÃâ ³ëµå ±¸Á¶Ã¼ Á¤ÀÇ
-{
-	struct salesNode *prev;		//ÀÌÀü ³ëµåÀÇ ÁÖ¼Ò
-	sales data;					//¸ÅÃâ µ¥ÀÌÅÍ
-	struct salesNode *next;		//´ÙÀ½ ³ëµåÀÇ ÁÖ¼Ò
-}salesNode;
-
 typedef struct memberNode		//È¸¿ø ³ëµå ±¸Á¶Ã¼ Á¤ÀÇ
 {
 	struct memberNode *prev;	//ÀÌÀü ³ëµåÀÇ ÁÖ¼Ò
@@ -97,12 +87,6 @@ typedef struct productNode		//»óÇ° ³ëµå ±¸Á¶Ã¼ Á¤ÀÇ
 /* ---------------------------------- */
 
 
-typedef struct salesList		//¸ÅÃâ ¸®½ºÆ® Á¤ÀÇ
-{
-	salesNode *head;			//¸Ó¸® ³ëµåÀÇ ÁÖ¼Ò
-	salesNode *tail;			//²¿¸® ³ëµåÀÇ ÁÖ¼Ò
-	salesNode *crnt;			//ÇöÀç ¼±ÅÃµÈ ³ëµåÀÇ ÁÖ¼Ò
-}salesList;
 
 typedef struct memberList		//È¸¿ø ¸®½ºÆ® Á¤ÀÇ
 {
@@ -129,19 +113,6 @@ typedef struct productList		//»óÇ° ¸®½ºÆ® Á¤ÀÇ
   /* ----------------------- */
 
 
-  /* salesList ¿¡ ´ëÇÑ ÇÔ¼ö ¸ñ·Ï */
-
-salesNode* allocSalesNode();														// »õ ³ëµåÀÇ ÁÖ¼Ò¸¦ ¹ÝÈ¯ÇÏ´Â ÇÔ¼ö  
-void setSalesNode(salesNode *n, salesNode *prev, salesNode *next, sales data);		// ³ëµåÀÇ °ªµéÀ» ¼³Á¤ÇÏ´Â ÇÔ¼ö
-int sizeOfSalesList(const salesList *list);											// ¿¬°á ¸®½ºÆ®ÀÇ Å©±â¸¦ ¹ÝÈ¯ÇÏ´Â ÇÔ¼ö 
-bool isEmptySalesList(const salesList *list);										// ¿¬°á ¸®½ºÆ®°¡ ºñ¾îÀÖ´ÂÁö È®ÀÎ ÇÏ´Â ÇÔ¼ö
-void setCurrentSalesNode(salesList *list, Index pos);								// ÇöÀç ¼±ÅÃ ³ëµå¸¦ Æ¯Á¤³ëµå·Î °¡¸£Å°°Ô ÇÏ´Â ÇÔ¼ö
-void initializeSalesList(salesList *list);											// ¸®½ºÆ®¸¦ ÃÊ±âÈ­ ÇÏ´Â ÇÔ¼ö
-void printSalesList(const salesList *list);											// ¸®½ºÆ®³»ÀÇ µ¥ÀÌÅÍ¸¦ Ãâ·ÂÇÏ´Â ÇÔ¼ö
-void addDataToSalesList(salesList *list, Index pos, sales data);					// ¸®½ºÆ®ÀÇ Æ¯Á¤ À§Ä¡¿¡ µ¥ÀÌÅÍ¸¦ Ãß°¡ÇÏ´Â ÇÔ¼ö
-void deleteDataFromSalesList(salesList *list, Index pos);							// ¸®½ºÆ®³» Æ¯Á¤ À§Ä¡ÀÇ µ¥ÀÌÅÍ¸¦ »èÁ¦ÇÏ´Â ÇÔ¼ö
-sales getDataFromSalesList(salesList *list, Index pos);								// ¸®½ºÆ®³» Æ¯Á¤ À§Ä¡ÀÇ µ¥ÀÌÅÍ¸¦ ¹ÝÈ¯ÇÏ´Â ÇÔ¼ö
-void terminateSalesList(salesList *list);											// ¸®½ºÆ®¿¡ ÇÒ´çµÈ °ø°£À» ÇØÁ¦ÇÏ°í Á¾·áÇÏ´Â ÇÔ¼ö
 
 /* memberList ¿¡ ´ëÇÑ ÇÔ¼ö ¸ñ·Ï */
 
@@ -181,8 +152,8 @@ void printMainWindow();
 void printSelectMenu();
 void MemberManageMenu(memberList *list);
 void ProductManageMenu(productList *list);
-void OrderManageMenu(productList *pro_list, memberList *mem_list, salesList *sales_list);
-void SalesManageMenu();
+void OrderManageMenu(productList *pro_list, memberList *mem_list);
+void SalesManageMenu(productList *list);
 
 /* ------------------------ */
 /* ÁÖ¿ä ±â´É¿¡ ´ëÇÑ ÇÔ¼ö ¸ñ·Ï */
@@ -208,113 +179,30 @@ void printAllProduct(productList *list);    // ¸ðµç »óÇ° Ãâ·Â ÇÔ¼ö
 
 /* ÁÖ¹® °ü¸®¿¡ ´ëÇÑ ÇÔ¼ö ¸ñ·Ï */
 
-void orderProduct(productList *prodictlist, salesList *saleslist, memberList *memberlist);	// »óÇ° ÁÖ¹® ÇÔ¼ö
-void cancelOrder(productList *prodictlist, salesList *saleslist, memberList *memberlist);   // »óÇ° ÁÖ¹® Ãë¼Ò ÇÔ¼ö
+void orderProduct(productList *prodictlist,  memberList *memberlist);	// »óÇ° ÁÖ¹® ÇÔ¼ö
 
 /* ¸ÅÃâ °ü¸®¿¡ ´ëÇÑ ÇÔ¼ö ¸ñ·Ï */
 
-void printAllSales(salesList *list);		// ÃÑ ¸ÅÃâ Ãâ·Â ÇÔ¼ö
-void printSalesByDates(salesList *list);    // ³¯Â¥ º° ¸ÅÃâ Ãâ·Â ÇÔ¼ö 
-void printSalesByProduct(salesList *saleslist, productList *productlist);					// »óÇ° º° ¸ÅÃâ Ãâ·Â ÇÔ¼ö
+void printAllSales(productList *list);		// ÃÑ ¸ÅÃâ Ãâ·Â ÇÔ¼ö 
+void printSalesByProduct( productList *list);					// »óÇ° º° ¸ÅÃâ Ãâ·Â ÇÔ¼ö
 
 
-/* -------------------------- */
-/* ÆÄÀÏ ÀÔÃâ·Â¿¡ ´ëÇÑ ÇÔ¼ö ¸ñ·Ï */
-/* -------------------------- */
 
-
-void loadMemberFromFile(memberList *list);	// È¸¿ø ¸ñ·Ï ºÒ·¯¿À±â
-void saveMemberToFile(memberList *list);	// È¸¿ø ¸ñ·Ï ÀúÀåÇÏ±â
-
-void loadProductFromFile(memberList *list); // »óÇ° ¸ñ·Ï ºÒ·¯¿À±â
-void saveProductToFile(memberList *list);	// »óÇ° ¸ñ·Ï ÀúÀåÇÏ±â
-
-void loadSalesFromFile(memberList *list);	// È¸¿ø ¸ñ·Ï ºÒ·¯¿À±â
-void saveSalesToFile(memberList *list);		// È¸¿ø ¸ñ·Ï ÀúÀåÇÏ±â
 
 
 /* -------- */
 /* ¸ÞÀÎ ÇÔ¼ö */
 /* -------- */
 
-//#define DEBUG
-
 #define DEBUG_IF
 
 int main()
 {
-	
-	
-#ifdef DEBUG
-
-	memberList member_list;
-	salesList sales_list;
-	productList product_list;
-
-	member mdata1 = { "Kim","01012345678",1000 };
-	member mdata2 = { "Lee","01099999999",2000 };
-
-	product pdata1 = { "Coffee",4000,0 };
-	product pdata2 = { "Cake",2000,2 };
-
-	sales sdata1 = { "20200419",15000 };
-	sales sdata2 = { "20200420",40000 };
-
-	/*DEBUG_MEMBER_LIST*/
-	/*
-	initializeMemberList(&member_list);
-	addDataToMemberList(&member_list, 1, mdata1);
-	addDataToMemberList(&member_list, 2, mdata2);
-	printMemberList(&member_list);
-	deleteDataFromMemberList(&member_list, 1);
-	registerMember(&member_list);
-	printMemberList(&member_list);
-	changeMemberName(&member_list);
-	printMemberList(&member_list);
-	changeMemberID(&member_list);
-	printMemberList(&member_list);
-	deleteMember(&member_list);
-	printMemberList(&member_list);
-	terminateMemberList(&member_list);
-	*/
-	/*DEBUG_PRODUCT_LIST*/
-	
-
-	initializeProductList(&product_list);
-	addDataToProductList(&product_list, 1, pdata1);
-	addDataToProductList(&product_list, 2, pdata2);
-	printProductList(&product_list);
-	deleteDataFromProductList(&product_list, 1);
-	printProductList(&product_list);
-	addProduct(&product_list);
-	printProductList(&product_list);
-	changeProductPrice(&product_list);
-	printProductList(&product_list);
-	deleteProduct(&product_list);
-	printProductList(&product_list);
-	terminateProductList(&product_list);
-
-	/*DEBUG_MEMBER_LIST*/
-	/*
-	initializeSalesList(&sales_list);
-	addDataToSalesList(&sales_list, 1, sdata1);
-	addDataToSalesList(&sales_list, 2, sdata2);
-	printSalesList(&sales_list);
-	deleteDataFromSalesList(&sales_list, 1);
-	printSalesList(&sales_list);
-
-	terminateSalesList(&sales_list);
-	*/
-	return 0;
-
-
-#endif // DEBUG
 
 #ifdef DEBUG_IF
 
 	/* ¸â¹ö »çÀü µ¥ÀÌÅÍ »ðÀÔ */
 	memberList member_list;
-	salesList sales_list;
 	productList product_list;
 
 	member mdata1 = { "Kim","01012345678",1000 };
@@ -334,14 +222,6 @@ int main()
 	addDataToProductList(&product_list, 1, pdata1);
 	addDataToProductList(&product_list, 2, pdata2);
 	
-	/* »óÇ° »çÀü µ¥ÀÌÅÍ »ðÀÔ ³¡ */
-	sales sdata1 = { "20200419",15000 };
-	sales sdata2 = { "20200420",40000 };
-	initializeSalesList(&sales_list);
-	addDataToSalesList(&sales_list, 1, sdata1);
-	addDataToSalesList(&sales_list, 2, sdata2);
-	
-
 	enum main_menu menu;
 
 	printMainWindow(); // ¸ÞÀÎ À©µµ¿ì ¿ÀÇÂ 
@@ -362,31 +242,23 @@ int main()
 				ProductManageMenu(&product_list);
 				break;
 			case ORDER_MANAGE:
-				OrderManageMenu(&product_list, &member_list, &sales_list);
+				OrderManageMenu(&product_list, &member_list);
 				break;
 			case SALES_MANAGE:
-
+				SalesManageMenu(&product_list);
 				break;
 
 			case EXIT:
 				terminateMemberList(&member_list);
-				terminateSalesList(&sales_list);
 				terminateProductList(&product_list);
 				return 0;
-
 
 			default:
 				printInputError();
 				break;
 		}
-
-
-
 	}
-
 #endif
-
-
 }
 
 
@@ -394,137 +266,10 @@ int main()
 /* ÇÔ¼ö Á¤ÀÇ */
 /* --------- */
 
-
 /* ----------------------- */
 /* ¿¬°á¸®½ºÆ® °ü·Ã ÇÔ¼ö ¸ñ·Ï */
 /* ----------------------- */
 
-
-/* salesList ¿¡ ´ëÇÑ ÇÔ¼ö ¸ñ·Ï */
-
-salesNode* allocSalesNode()														// »õ ³ëµåÀÇ ÁÖ¼Ò¸¦ ¹ÝÈ¯ÇÏ´Â ÇÔ¼ö
-{
-	return (salesNode*)calloc(1, sizeof(salesNode));							//»õ·Î¿î ³ëµåÁÖ¼Ò¸¦ ÇÒ´çÇÏ¿© ¹ÝÈ¯
-}
-void setSalesNode(salesNode *n, salesNode *prev, salesNode *next, sales data)		// ³ëµåÀÇ °ªµéÀ» ¼³Á¤ÇÏ´Â ÇÔ¼ö
-{
-	n->prev = prev;																	// prev ¼³Á¤
-	n->next = next;																	//next ¼³Á¤
-	n->data = data;																	// data ¼³Á¤ 
-}
-int sizeOfSalesList(const salesList *list)											// ¿¬°á ¸®½ºÆ®ÀÇ Å©±â¸¦ ¹ÝÈ¯ÇÏ´Â ÇÔ¼ö 
-{
-	int cnt = 0;																	// Å©±â ÃÊ±âÈ­
-	salesNode *ptr = list->head->next;												// ptr º¯¼ö¿¡ °ªÀÌ Á¸ÀçÇÏ´Â Ã¹ ³ëµå ´ëÀÔ
-	while (ptr->next != NULL)														// ptr ³ëµåÀÇ ´ÙÀ½³ëµå°¡ NULL ÀÏ ¶§ ±îÁö ¹Ýº¹(¸Ç ¸¶Áö¸· ²¿¸®³ëµå)
-	{
-		cnt++;																		// Å©±âº¯¼ö Áõ°¡
-		ptr = ptr->next;															// ptr À» ´ÙÀ½ ³ëµå·Î
-	}
-	return cnt;																		// Å©±â ¹ÝÈ¯
-}
-bool isEmptySalesList(const salesList *list)										// ¿¬°á ¸®½ºÆ®°¡ ºñ¾îÀÖ´ÂÁö È®ÀÎ ÇÏ´Â ÇÔ¼ö
-{
-	if (list->head->next == list->tail) return true;								// ¸Ó¸®³ëµåÀÇ ´ÙÀ½³ëµå°¡ ²¿¸® ³ëµåÀÏ¶§ ºñ¾îÀÖ´Â ¸®½ºÆ®ÀÓ
-	else return false;
-}
-void setCurrentSalesNode(salesList *list, Index pos)								// ÇöÀç ¼±ÅÃ ³ëµå¸¦ Æ¯Á¤³ëµå·Î °¡¸£Å°°Ô ÇÏ´Â ÇÔ¼ö
-{
-	if (isEmptySalesList(list))																// ºó ¸®½ºÆ®ÀÏ¶§ 
-	{
-		list->crnt = list->tail;													// ²¿¸®³ëµå·Î °¡¸®Å´
-		return;
-	}
-	salesNode *ptr = list->head;													// ÀÓ½Ã ptr º¯¼ö¸¦ ¸Ó¸®³ëµå¸¦ °¡¸®Å°°Ô ÇÔ 
-	for (Index i = 0; i <= pos; ptr = ptr->next, i++)								// ptrÀÌ pos¹øÀ» °¡¸£Å°°Ô ÇÑ´Ù.
-	{
-		list->crnt = ptr;															// ptrÀ» ÇöÀç ¼±ÅÃ ³ëµå·Î
-	}
-}
-void initializeSalesList(salesList *list)											// ¸®½ºÆ®¸¦ ÃÊ±âÈ­ ÇÏ´Â ÇÔ¼ö
-{
-	sales data = {0};
-	list->head = allocSalesNode();														// ¸Ó¸® ³ëµå¸¦ ÇÒ´ç
-	list->tail = allocSalesNode();														// ²¿¸® ³ëµå¸¦ ÇÒ´ç
-	setSalesNode(list->head, NULL, list->tail, data);										// ¸Ó¸®³ëµå¸¦ ÃÊ±âÈ­
-	setSalesNode(list->tail, list->head, NULL, data);										// ²¿¸® ³ëµå¸¦ ÃÊ±âÈ­
-
-	list->crnt = list->head;														// ÇöÀç ¼±ÅÃ ³ëµå ÃÊ±âÈ­
-}
-void printSalesList(const salesList *list)											// ¸®½ºÆ®³»ÀÇ µ¥ÀÌÅÍ¸¦ Ãâ·ÂÇÏ´Â ÇÔ¼ö
-{
-	salesNode *ptr = list->head->next;												// ptrÀ» ¸Ç Ã³À½ °ª ³ëµå·Î ¼³Á¤
-	if (!isEmptySalesList(list))																// ºó ¸®½ºÆ®°¡ ¾Æ´Ï¸é Ãâ·Â
-	{
-		while (ptr->next != NULL)													// ¸®½ºÆ® ³¡±îÁö Å½»ö
-		{
-			printf("%s %d\n", ptr->data.date,ptr->data.todaySales);												// µ¥ÀÌÅÍ Ãâ·Â
-			ptr = ptr->next;														// ptrÀ» ´ÙÀ½ ³ëµå·Î		/*TODO µ¥ÀÌÅÍ Ãâ·Â Çü½Ä ¹Ù²ã¾ßÇÔ*/
-		}
-		printf("\n");   
-	}
-
-}
-void addDataToSalesList(salesList *list, Index pos, sales data)					// ¸®½ºÆ®ÀÇ Æ¯Á¤ À§Ä¡¿¡ µ¥ÀÌÅÍ¸¦ Ãß°¡ÇÏ´Â ÇÔ¼ö
-{
-	//if (!isValidPosition(list, pos - 1))										// ¿Ã¹Ù¸¥ À§Ä¡¿¡ »ðÀÔ ¿©ºÎ
-	//{
-	//	printf("invalid position\n");											// ¿À·ù¸Þ½ÃÁö Ãâ·Â
-	//	return;																	// ÇÔ¼ö ºñÁ¤»ó Á¾·á
-	//}
-
-	setCurrentSalesNode(list, pos);													// ÇöÀç ¼±ÅÃ ³ëµå¸¦ posÀ§Ä¡ ³ëµå·Î ¼³Á¤
-
-	salesNode *new_node = allocSalesNode();											// »õ·Î¿î ³ëµå¸¦ ÇÒ´ç
-	salesNode *crnt_node = list->crnt->prev;									// »ðÀÔµÉ À§Ä¡ÀÇ ÀÌÀü ÁÖ¼Ò ÀúÀå
-
-	crnt_node->next = new_node;													// »ðÀÔµÉ À§Ä¡ÀÇ ´ÙÀ½ ³ëµå¸¦ »õ³ëµå¿¡ ¿¬°á
-	list->crnt->prev = new_node;												// »ðÀÔµÉ À§Ä¡ÀÇ ÀÌÀü ³ëµå¸¦ »õ³ëµå¿¡ ¿¬°á
-
-	setSalesNode(new_node, crnt_node, list->crnt, data);								// »õ ³ëµå À§Ä¡¿Í µ¥ÀÌÅÍ ¼³Á¤ 
-}
-void deleteDataFromSalesList(salesList *list, Index pos)							// ¸®½ºÆ®³» Æ¯Á¤ À§Ä¡ÀÇ µ¥ÀÌÅÍ¸¦ »èÁ¦ÇÏ´Â ÇÔ¼ö
-{
-	//if (!isValidPosition(list, pos))												// ¿Ã¹Ù¸¥ À§Ä¡¿¡ Á¢±Ù È®ÀÎ ÇÔ¼ö
-	//{
-	//	printf("invalid position\n");												// ¿À·ù¸Þ½ÃÁö Ãâ·Â
-	//	return;																		// ÇÔ¼ö ºñÁ¤»ó Á¾·á
-	//}
-	setCurrentSalesNode(list, pos);														// ÇöÀç ¼±ÅÃ ³ëµå¸¦ posÀ§Ä¡ ³ëµå·Î ¼³Á¤
-
-	salesNode *A = list->crnt->prev;												// ÀÓ½Ã ÁöÁ¤ ³ëµå ¼³Á¤
-	salesNode *B = list->crnt->next;												// ÀÓ½Ã ÁöÁ¤ ³ëµå ¼³Á¤
-
-	A->next = B;																	// »èÁ¦ÇÒ ³ëµå ¾ÕµÚ¸¦ ¼­·Î ¿¬°á
-	B->prev = A;																	// »èÁ¦ÇÒ ³ëµå ¾ÕµÚ¸¦ ¼­·Î ¿¬°á
-
-	free(list->crnt);																// »èÁ¦ÇÒ ³ëµå °ø°£ ÇÒ´ç ÇØÁ¦
-
-	list->crnt = list->head;														// ÇöÀç ¼±ÅÃ ³ëµå¸¦ ¸Ó¸®³ëµå·Î 
-
-}
-sales getDataFromSalesList(salesList *list, Index pos)								// ¸®½ºÆ®³» Æ¯Á¤ À§Ä¡ÀÇ µ¥ÀÌÅÍ¸¦ ¹ÝÈ¯ÇÏ´Â ÇÔ¼ö
-{
-	//if (!isValidPosition(list, pos))												// ¿Ã¹Ù¸¥ Á¢±Ù ¿©ºÎ È®ÀÎ
-	//{	
-	//	printf("invalid position\n");												// ¿À·ù ¸Þ½ÃÁö Ãâ·Â
-	//	return ;																	// ÇÔ¼ö ºñÁ¤»ó Á¾·á
-	//}
-
-	setCurrentSalesNode(list, pos);														// ÇöÀç ¼±ÅÃ ³ëµå¸¦ pos¹øÂ° ³ëµå·Î
-
-	return list->crnt->data;														// ÇöÀç ¼±ÅÃ ³ëµå µ¥ÀÌÅÍ ¹ÝÈ¯
-}
-void terminateSalesList(salesList *list)											// ¸®½ºÆ®¿¡ ÇÒ´çµÈ °ø°£À» ÇØÁ¦ÇÏ°í Á¾·áÇÏ´Â ÇÔ¼ö
-{
-	while (!isEmptySalesList(list))															// ºó ¸®½ºÆ®°¡ µÉ ¶§ ±îÁö
-	{
-		deleteDataFromSalesList(list, 1);														// ¸Ç ¾Õ ³ëµå¸¦ »èÁ¦
-	}
-	list->crnt = NULL;																// ÇöÀç ¼±ÅÃ ³ëµå¸¦ NULL ·Î
-	free(list->head);																// ¸Ó¸® ³ëµå ÇÒ´ç ÇØÁ¦
-	free(list->tail);																// ²¿¸® ³ëµå ÇÒ´ç ÇØÁ¦
-}
 
 /* memberList ¿¡ ´ëÇÑ ÇÔ¼ö ¸ñ·Ï */
 
@@ -651,8 +396,6 @@ void terminateMemberList(memberList *list)											// ¸®½ºÆ®¿¡ ÇÒ´çµÈ °ø°£À» Ç
 	free(list->head);																// ¸Ó¸® ³ëµå ÇÒ´ç ÇØÁ¦
 	free(list->tail);																// ²¿¸® ³ëµå ÇÒ´ç ÇØÁ¦
 }
-
-
 
 
 /* productList ¿¡ ´ëÇÑ ÇÔ¼ö ¸ñ·Ï */
@@ -804,13 +547,11 @@ void printMainWindow()
 	printf("___________________**************___________________\n");
 	keyPressDelay();
 }
-
 void printSelectMenu()
 {
 	printf("(1)È¸¿ø°ü¸® (2)»óÇ°°ü¸® (3)ÁÖ¹®°ü¸® (4)¸ÅÃâ°ü¸® (0)Á¾·á\n");
 	printf("¸Þ´º¸¦ ¼±ÅÃÇØÁÖ¼¼¿ä : ");
 }
-
 void MemberManageMenu(memberList *list)
 {
 	enum member_menu menu;
@@ -844,7 +585,6 @@ void MemberManageMenu(memberList *list)
 		}
 	}
 }
-
 void ProductManageMenu(productList *list)
 {
 	enum product_menu menu;
@@ -878,16 +618,35 @@ void ProductManageMenu(productList *list)
 		}
 	}
 }
-
-
-void OrderManageMenu(productList *pro_list,memberList *mem_list,salesList *sales_list)
+void OrderManageMenu(productList *pro_list,memberList *mem_list)
 {
-	orderProduct(pro_list, sales_list, mem_list);
+	orderProduct(pro_list, mem_list);
 }
-
-void SalesManageMenu()
+void SalesManageMenu(productList *list)
 {
+	enum sales_menu menu;
 
+	while (true)
+	{
+		printf("(1)ÃÑ ¸ÅÃâ (2)»óÇ°º° ¸ÅÃâ Á¶È¸ (0)Ã³À½À¸·Î\n");
+		scanf("%d", (int*)&menu);
+		system("cls");
+		switch (menu)
+		{
+			case PRINT_ALL:
+				printAllSales(list);
+				break;
+			case PRINT_BY_PRODUCT:
+				printSalesByProduct(list);
+				break;
+			case EXIT_SALES_MENU:
+				system("cls");
+				return;
+			default:
+				printInputError();
+				break;
+		}
+	}
 }
 
 /* ------------------------ */
@@ -1239,7 +998,7 @@ void printAllProduct(productList *list)    // ¸ðµç »óÇ° Ãâ·Â ÇÔ¼ö
 
 /* ÁÖ¹® °ü¸®¿¡ ´ëÇÑ ÇÔ¼ö ¸ñ·Ï */
 
-void orderProduct(productList *pro_list, salesList *sales_list, memberList *mem_list)	// »óÇ° ÁÖ¹® ÇÔ¼ö
+void orderProduct(productList *pro_list, memberList *mem_list)	// »óÇ° ÁÖ¹® ÇÔ¼ö
 {
 	Index idx;
 	int k;
@@ -1303,14 +1062,35 @@ void orderProduct(productList *pro_list, salesList *sales_list, memberList *mem_
 
 
 }
-void cancelOrder(productList *prodictlist, salesList *saleslist, memberList *memberlist)   // »óÇ° ÁÖ¹® Ãë¼Ò ÇÔ¼ö
-{
 
-
-
-}
 /* ¸ÅÃâ °ü¸®¿¡ ´ëÇÑ ÇÔ¼ö ¸ñ·Ï */
 
-void printAllSales(salesList *list);		// ÃÑ ¸ÅÃâ Ãâ·Â ÇÔ¼ö
-void printSalesByDates(salesList *list);    // ³¯Â¥ º° ¸ÅÃâ Ãâ·Â ÇÔ¼ö 
-void printSalesByProduct(salesList *saleslist, productList *productlist);					// »óÇ° º° ¸ÅÃâ Ãâ·Â ÇÔ¼ö
+void printAllSales(productList *list)		// ÃÑ ¸ÅÃâ Ãâ·Â ÇÔ¼ö
+{
+	int all_sales = 0;
+	productNode *ptr = list->head->next;												// ptrÀ» ¸Ç Ã³À½ °ª ³ëµå·Î ¼³Á¤
+	if (!isEmptyProductList(list))																// ºó ¸®½ºÆ®°¡ ¾Æ´Ï¸é Ãâ·Â
+	{
+		while (ptr->next != NULL)													// ¸®½ºÆ® ³¡±îÁö Å½»ö
+		{
+			all_sales += (ptr->data.price)*(ptr->data.sellCnt);
+			ptr = ptr->next;														// ptrÀ» ´ÙÀ½ ³ëµå·Î		/*TODO µ¥ÀÌÅÍ Ãâ·Â Çü½Ä ¹Ù²ã¾ßÇÔ*/
+		}
+	}
+	printf("ÃÑ ¸ÅÃâÀº %d ¿ø ÀÔ´Ï´Ù.\n",all_sales);
+	keyPressDelay();
+}
+void printSalesByProduct(productList *list)					// »óÇ° º° ¸ÅÃâ Ãâ·Â ÇÔ¼ö
+{
+	productNode *ptr = list->head->next;												// ptrÀ» ¸Ç Ã³À½ °ª ³ëµå·Î ¼³Á¤
+	if (!isEmptyProductList(list))																// ºó ¸®½ºÆ®°¡ ¾Æ´Ï¸é Ãâ·Â
+	{
+		while (ptr->next != NULL)													// ¸®½ºÆ® ³¡±îÁö Å½»ö
+		{
+			printf("»óÇ° ÀÌ¸§ : %s ¸ÅÃâ : %d¿ø\n", ptr->data.name, (ptr->data.price) *(ptr->data.sellCnt));												// µ¥ÀÌÅÍ Ãâ·Â
+			ptr = ptr->next;														// ptrÀ» ´ÙÀ½ ³ëµå·Î		/*TODO µ¥ÀÌÅÍ Ãâ·Â Çü½Ä ¹Ù²ã¾ßÇÔ*/
+		}
+		printf("\n");
+	}
+	keyPressDelay();
+}
