@@ -1,45 +1,45 @@
-#pragma warning(disable:4996)
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <Windows.h>
+#pragma warning(disable:4996)			// 보안경고 무시
+#include <stdio.h>						// stdio.h 헤더 include
+#include <string.h>						// string.h 헤더 include
+#include <stdlib.h>						// stdlib.h 헤더 include
+#include <Windows.h>					// windows.h 헤더 include (system사용위함)	
 
-#define true 1
-#define false 0
+#define true 1						//true 를 1로
+#define false 0						// false를 0 으로
 
-enum main_menu
+enum main_menu				//메인메뉴 열거형 정의
 {
-	EXIT = 0,
-	MEMBER_MANAGE,
-	PRODUCT_MANAGE,
-	ORDER_MANAGE,
-	SALES_MANAGE
+	EXIT = 0,				// 종료 는 0부터
+	MEMBER_MANAGE,			// 회원관리
+	PRODUCT_MANAGE,			// 상품관리
+	ORDER_MANAGE,			// 주문관리
+	SALES_MANAGE			// 매출관리
 };
-enum member_menu
+enum member_menu				// 회원관리 메뉴 열거형
 {
-	EXIT_MEMBER_MENU = 0,
-	PRINT_MEMBER,
-	CHANGE_NAME,
-	CHANGE_ID,
-	DELETE_MEMBER
+	EXIT_MEMBER_MENU = 0,		// 종료를 0부터
+	PRINT_MEMBER,				// 회원 출력
+	CHANGE_NAME,				// 회원 이름변경
+	CHANGE_ID,					// 회원 아이디 변경
+	DELETE_MEMBER				// 회원 삭제
 };
-enum product_menu
+enum product_menu              // 상품관리 메뉴 열거형
 {
-	EXIT_PRODUCT_MENU = 0,
-	PRINT_PRODUCT,
-	ADD_PRODUCT,
-	CHANGE_PRICE,
-	DELETE_PRODUCT
+	EXIT_PRODUCT_MENU = 0,		// 종료를 0으로
+	PRINT_PRODUCT,				// 상품 출력
+	ADD_PRODUCT,				// 상품 추가
+	CHANGE_PRICE,				// 상품 가격 변경
+	DELETE_PRODUCT				// 상품 삭제
 };
-enum sales_menu
+enum sales_menu              // 매출관리 메뉴 열거형
 {
-	EXIT_SALES_MENU =0,
-	PRINT_ALL,
-	PRINT_BY_PRODUCT
+	EXIT_SALES_MENU =0,      //종료를 0으로 
+	PRINT_ALL,					// 총매출 출력
+	PRINT_BY_PRODUCT				// 상품별 매출 출력
 };
 
-typedef int bool;
-typedef int Index;
+typedef int bool;     //bool형 자료형 만들기
+typedef int Index;    // Index형 자료형 만들기
 
 
 /* ---------------------------- */
@@ -146,14 +146,14 @@ void terminateProductList(productList *list);											// 리스트에 할당된 공간�
 /* --------------------------*/
 /* 인터페이스에 대한 함수 목록 */
 /* --------------------------*/
-void keyPressDelay();
-void printInputError();
-void printMainWindow();
-void printSelectMenu();
-void MemberManageMenu(memberList *list);
-void ProductManageMenu(productList *list);
-void OrderManageMenu(productList *pro_list, memberList *mem_list);
-void SalesManageMenu(productList *list);
+void keyPressDelay();														// 키 입력 대기 함수
+void printInputError();														// 입력 오류 출력 함수
+void printMainWindow();														// 메인 화면 출력 함수
+void printSelectMenu();														// 메뉴 선택 출력 함수
+void MemberManageMenu(memberList *list);									// 회원 관리 메뉴
+void ProductManageMenu(productList *list);									// 상품 관리 메뉴
+void OrderManageMenu(productList *pro_list, memberList *mem_list);			// 주문 관리 메뉴
+void SalesManageMenu(productList *list);									// 매출 관리 메뉴 
 
 /* ------------------------ */
 /* 주요 기능에 대한 함수 목록 */
@@ -187,74 +187,74 @@ void printAllSales(productList *list);		// 총 매출 출력 함수
 void printSalesByProduct( productList *list);					// 상품 별 매출 출력 함수
 
 
-
-
-
 /* -------- */
 /* 메인 함수 */
 /* -------- */
 
 #define DEBUG_IF
 
-int main()
+int main()			//메인함수 시작 
 {
 
 #ifdef DEBUG_IF
 
 	/* 멤버 사전 데이터 삽입 */
-	memberList member_list;
-	productList product_list;
+	memberList member_list;			//멤버리스트 선언
+	productList product_list;		// 상품 리스트 선언
 
 	member mdata1 = { "Kim","01012345678",1000 };
 	member mdata2 = { "Lee","01099999999",2000 };
-
-	initializeMemberList(&member_list);
-	addDataToMemberList(&member_list, 1, mdata1);
+	member mdata3 = { "Park","01000000000",500 };
+	initializeMemberList(&member_list);				//리스트 초기화
+	addDataToMemberList(&member_list, 1, mdata1);   // 데이터 1,2,3 삽입
 	addDataToMemberList(&member_list, 2, mdata2);
+	addDataToMemberList(&member_list, 3, mdata3);
 
 	/* 멤버 사전 데이터 삽입 끝 */
+
 	/* 상품 사전 데이터 삽입*/
-
-	product pdata1 = { "Coffee",4000,0 };
-	product pdata2 = { "Cake",2000,2 };
-
-	initializeProductList(&product_list);
-	addDataToProductList(&product_list, 1, pdata1);
+	product pdata1 = { "Coffee",3500,1 };
+	product pdata2 = { "Cake",5000,2 };
+	product pdata3 = { "Milk",1000,2 };
+	initializeProductList(&product_list);		//리스트 초기화 
+	addDataToProductList(&product_list, 1, pdata1);		//데이터 1,2,3 삽입
 	addDataToProductList(&product_list, 2, pdata2);
-	
-	enum main_menu menu;
+	addDataToProductList(&product_list, 3, pdata3);
+	/* 상품 사전 데이터 삽입 끝 */
+
+	enum main_menu menu;			//열거형 정의 
 
 	printMainWindow(); // 메인 윈도우 오픈 
 
-	while (true)
+	while (true)		//무한 루프
 	{
 		printSelectMenu(); // 메뉴 선택 
 
-		scanf("%d",(int*)&menu);
-		system("cls");
+		scanf("%d",(int*)&menu);   //메뉴 번호 입력
+		system("cls");			// 콘솔 화면 초기화
 
-		switch (menu)
+		switch (menu)				//메뉴선택 분기
 		{
-			case MEMBER_MANAGE:
-				MemberManageMenu(&member_list);
+			case MEMBER_MANAGE:				//1번 회원관리
+				MemberManageMenu(&member_list);   // 회원관리 함수 호출 
 				break;
-			case PRODUCT_MANAGE:
-				ProductManageMenu(&product_list);
+			case PRODUCT_MANAGE:                 // 2번 상품관리
+				ProductManageMenu(&product_list);   // 상품관리 함수 호출 
 				break;
-			case ORDER_MANAGE:
-				OrderManageMenu(&product_list, &member_list);
+			case ORDER_MANAGE:             // 3번 주문관리
+				OrderManageMenu(&product_list, &member_list);     //주문관리 함수 호출 
 				break;
-			case SALES_MANAGE:
-				SalesManageMenu(&product_list);
+			case SALES_MANAGE:                //4번 매출관리
+				SalesManageMenu(&product_list);    //매출 관리 함수 호출 
 				break;
 
-			case EXIT:
-				terminateMemberList(&member_list);
-				terminateProductList(&product_list);
-				return 0;
+			case EXIT:                        //0 번 프로그램 종료
+				terminateMemberList(&member_list);	// 리스트 종료
+				terminateProductList(&product_list); // 리스트 종료
+				return 0;  //프로그램 종료
 
-			default:
-				printInputError();
+			default:										// 예외처리
+				printInputError();							// 오류 메시지 출력
 				break;
 		}
 	}
@@ -530,120 +530,122 @@ void terminateProductList(productList *list)											// 리스트에 할당된 공간을
 /* 인터페이스에 대한 함수 목록 */
 /* --------------------------*/
 
-void keyPressDelay()
+void keyPressDelay()			//키 입력 대기 함수
 {
-	system("pause");
-	system("cls");
+	system("pause");			// 아무키나 입력 대기
+	system("cls");				// 콘솔창 초기화
 }
-void printInputError()
+void printInputError()			//에러 메시지 출력 함수
 {
-	printf("잘못된 입력입니다.\n");
-	keyPressDelay();
+	printf("잘못된 입력입니다.\n");			// 에러 메시지 출력 
+	keyPressDelay();						// 키 입력 대기
 }
-void printMainWindow()
+void printMainWindow()										//메인 화면 출력 함수
 {
-	printf("___________________**************___________________\n");
+	printf("___________________**************___________________\n");   // 메인 화면 출력 
 	printf("___________________카페관리 시스템___________________\n");
 	printf("___________________**************___________________\n");
-	keyPressDelay();
+	printf("\n");
+	keyPressDelay();			//키 입력 대기
 }
-void printSelectMenu()
+void printSelectMenu()			//메뉴 선택 함수
 {
-	printf("(1)회원관리 (2)상품관리 (3)주문관리 (4)매출관리 (0)종료\n");
+	printf("(1)회원관리 (2)상품관리 (3)주문관리 (4)매출관리 (0)종료\n");    //메뉴 출력 
 	printf("메뉴를 선택해주세요 : ");
 }
-void MemberManageMenu(memberList *list)
+void MemberManageMenu(memberList *list)             //회원 관리 함수
 {
-	enum member_menu menu;
+	enum member_menu menu;           //열거형 메뉴 선언
 
-	while (true)
+	while (true)           //무한루프
 	{
-		printf("(1)회원조회 (2)회원이름변경 (3)회원아이디변경 (4)회원삭제 (0)처음으로\n");
+		printf("(1)회원조회 (2)회원이름변경 (3)회원아이디변경 (4)회원삭제 (0)처음으로\n");    // 메뉴 출력 
 		printf("메뉴를 선택해주세요 : ");
-		scanf("%d", (int*)&menu);
-		system("cls");
-		switch (menu)
+		scanf("%d", (int*)&menu);         // 메뉴 입력 
+		system("cls");            // 콘솔창 초기화
+		switch (menu)     // 메뉴 선택
 		{
-			case PRINT_MEMBER:
-				printAllMember(list);
+			case PRINT_MEMBER:          //1번 회원 출력 
+				printAllMember(list);    //회원 출력 함수 호출
 				break;
-			case CHANGE_NAME:
-				changeMemberName(list);
+			case CHANGE_NAME:		//2번 회원 이름 변경
+				changeMemberName(list);   // 회원 이름 변경 함수 호출
 				break;
-			case CHANGE_ID:
-				changeMemberID(list);
+			case CHANGE_ID:				//3번 회원 아이디 변경 
+				changeMemberID(list);     //회원 아이디 변경 함수 호출
 				break;
-			case DELETE_MEMBER:
-				deleteMember(list);
+			case DELETE_MEMBER:         //4번 회원 삭제 
+				deleteMember(list);     //회원 삭제 함수 호출 
 				break;
-			case EXIT_MEMBER_MENU:
-				system("cls");
-				return;
-			default:
-				printInputError();
+			case EXIT_MEMBER_MENU:       // 0번 메뉴 종료
+				system("cls");           // 콘솔 초기화
+				return;                //함수 종료
+			default:							//예외
+				printInputError();       // 입력 오류 출력 
 				break;
 		}
 	}
 }
-void ProductManageMenu(productList *list)
+void ProductManageMenu(productList *list)      // 상품 관리 메뉴 함수
 {
-	enum product_menu menu;
-	while (true)
+	enum product_menu menu;        // 상품 메뉴 열거형 선언
+	while (true)  // 무한루프
 	{
-		printf("(1)상품조회 (2)상품추가 (3)상품가격변경 (4)상품삭제 (0)처음으로\n");
+		printf("(1)상품조회 (2)상품추가 (3)상품가격변경 (4)상품삭제 (0)처음으로\n");    //메뉴 출력
 		printf("메뉴를 선택해주세요 : ");
-		scanf("%d", (int*)&menu);
-		system("cls");
+		scanf("%d", (int*)&menu);   //메뉴 입력
+		system("cls");   //콘솔 초기화
 
-		switch (menu)
+		switch (menu)   //메뉴 선택
 		{
-			case PRINT_PRODUCT:
-				printAllProduct(list);
+			case PRINT_PRODUCT:			//1번 상품 출력
+				printAllProduct(list);  //상품출력함수 호출
 				break;
-			case ADD_PRODUCT:
-				addProduct(list);
+			case ADD_PRODUCT:		//2번 상품 추가
+				addProduct(list);		//상품 추가 함수 호출
 				break;
-			case CHANGE_PRICE:
-				changeProductPrice(list);
+			case CHANGE_PRICE:			//3번 상품 가격 변경
+				changeProductPrice(list);	//상품 가격 변경 함수 호출
 				break;
-			case DELETE_PRODUCT:
-				deleteProduct(list);
+			case DELETE_PRODUCT:		//4번 상품 삭제 
+				deleteProduct(list);  //상품 삭제함수 호출
 				break;
-			case EXIT_PRODUCT_MENU:
-				system("cls");
-				return;
-			default:
-				printInputError();
+			case EXIT_PRODUCT_MENU:		//0번 종료
+				system("cls");        //콘솔창 초기화
+				return;             // 함수종료
+			default:			//예외
+				printInputError();     // 오류메시지 출력   
 				break;
 		}
 	}
 }
-void OrderManageMenu(productList *pro_list,memberList *mem_list)
+void OrderManageMenu(productList *pro_list,memberList *mem_list)        //주문관리 함수 
 {
-	orderProduct(pro_list, mem_list);
+	orderProduct(pro_list, mem_list);       // 주문관리 함수 호출 
 }
-void SalesManageMenu(productList *list)
+void SalesManageMenu(productList *list)         //매출 관리 함수
 {
-	enum sales_menu menu;
+	enum sales_menu menu;        // 매출관리 열거형 선언
 
-	while (true)
+	while (true)	//무한루프
 	{
-		printf("(1)총 매출 (2)상품별 매출 조회 (0)처음으로\n");
-		scanf("%d", (int*)&menu);
-		system("cls");
-		switch (menu)
+		printf("(1)총 매출 (2)상품별 매출 조회 (0)처음으로\n");        // 메뉴선택창 출력 
+		printf("메뉴를 선택해주세요 : ");
+		scanf("%d", (int*)&menu);       // 메뉴 입력
+		system("cls");   //콘솔 초기화
+		switch (menu)   //메뉴 선택
 		{
-			case PRINT_ALL:
-				printAllSales(list);
+			case PRINT_ALL:         //1번 총매출 출력 
+				printAllSales(list);  // 총매출 출력 함수 호출
 				break;
-			case PRINT_BY_PRODUCT:
-				printSalesByProduct(list);
+			case PRINT_BY_PRODUCT:       //2번 상품별 매출 출력
+				printSalesByProduct(list);      // 상품별 매출 함수 출력 
 				break;
-			case EXIT_SALES_MENU:
-				system("cls");
-				return;
-			default:
-				printInputError();
+ 			case EXIT_SALES_MENU:			// 0번 종료
+				system("cls");            //콘솔창 초기화
+				return;				// 함수종료
+			default:				//예외
+				printInputError();			//입력 오류메시지 출력 
 				break;
 		}
 	}
@@ -694,8 +696,8 @@ Index findIndexOfMemberById(const memberList *list, const char id[])	//회원 아이
 }
 void printAllMember(memberList *list)		// 회원 조회 함수
 {
-	printMemberList(list);
-	keyPressDelay();
+	printMemberList(list);       // 회원출력
+	keyPressDelay();       // 키입력 대기
 }
 void registerMember(memberList *list)		// 회원 가입 함수
 {
@@ -719,7 +721,7 @@ void registerMember(memberList *list)		// 회원 가입 함수
 	
 	printf("가입 완료 !!\n");									// 가입 완료 메시지
 
-	keyPressDelay();
+	keyPressDelay();            // 키입력 대기
 }
 void changeMemberName(memberList *list)	// 회원 이름 변경 함수
 {
@@ -735,10 +737,9 @@ void changeMemberName(memberList *list)	// 회원 이름 변경 함수
 	
 	if (find_name_idx == -1)										// 이름이 없을때 처리
 	{
-		printf("이름을 찾지 못하였습니다.\n");						// 오류 메시지 출력
-		return;														// 함수 비정상 종료
-
+		printf("이름을 찾지 못하였습니다.\n");						// 오류 메시지 출력											
 		keyPressDelay();
+		return;
 	}
 
 	setCurrentMemberNode(list, find_name_idx);
@@ -832,39 +833,39 @@ void deleteMember(memberList *list)		// 회원 삭제 함수
 }
 void changePointOfMember(memberList *list,int point)		// 회원 적립 함수
 {
-	Index find_name_idx;
+	Index find_name_idx;			// 인덳스 , 이름 변수 선언
 	char find_name[11],regi;
 
 	printf("회원 이름을 입력해주세요. (영문10자 이내) :");				// 이름 입력 안내
 	scanf("%s", find_name);										// 이름 입력
 
-	find_name_idx = findIndexOfMemberByName(list, find_name);
+	find_name_idx = findIndexOfMemberByName(list, find_name);      // 이름 찾아서 인덱스 반환
 
 	if (find_name_idx == -1)										// 이름이 없을때 처리
 	{
 		printf("이름을 찾지 못하였습니다.\n");						// 오류 메시지 출력
 		printf("회원 가입을 하시겠습니까?[Y:N] :");
 		getchar();
-		scanf("%c", &regi);
+		scanf("%c", &regi);              // 입력 
 
-		if (regi == 'N' || regi == 'n')
+		if (regi == 'N' || regi == 'n')       // n 입력시
 		{
-			printf("회원 가입을 취소하셨습니다.\n");
-			keyPressDelay();
-			return;
+			printf("회원 가입을 취소하셨습니다.\n");   // 가입취소
+			keyPressDelay();					//키입력대기
+			return;								//함수종료
 		}
-		registerMember(list);
-		return;
+		registerMember(list);          //회원 가입 함수 호출 
+		return;						//함수 종료
 	}
 
 
-	setCurrentMemberNode(list, find_name_idx);
+	setCurrentMemberNode(list, find_name_idx);      //현재 선택노드를 찾은 인덱스로 
 
-	printf("이름을 찾았습니다!\n");
-	printf("%d 포인트가 적립되었습니다.\n", point);
+	printf("이름을 찾았습니다!\n");										//이름 찾기 성공 메시지 출력 
+	printf("%d 포인트가 적립되었습니다.\n\n", point);									// 포인트 적립
 	list->crnt->data.point += point;
-	printf("회원 정보\n%s %s %d\n", list->crnt->data.name, list->crnt->data.id, list->crnt->data.point);
-	keyPressDelay();
+	printf("회원 정보\n%s %s %d\n\n", list->crnt->data.name, list->crnt->data.id, list->crnt->data.point);   //적립 회원 정보출력
+	keyPressDelay();    // 키입력 대기
 }
 
 /* 상품 관리에 대한 함수 목록 */
@@ -892,182 +893,178 @@ void addProduct(productList *list)			// 상품 추가 함수
 	char product_name[21] = { "\0" };
 	int product_price = 0;
 
-	printf("상품추가\n");				//TODO 가입 인터페이스 만들기
+	printf("상품추가\n");				// 상품 추가 메뉴 출력 
 
-	printf("추가할 상품의 이름을 입력해주세요. (영문자 20자이내) :");
-	scanf("%s", product_name);
+	printf("추가할 상품의 이름을 입력해주세요. (영문자 20자이내) :");       // 상품추가 안내 메시지
+	scanf("%s", product_name);								//추가할 상품이름 입력
 	printf("추가할 상품의 가격을 입력해주세요.(원) :");
-	scanf("%d", &product_price);
+	scanf("%d", &product_price);											// 추가할 상품 가격 입력 
 
-	product new_product = { "tmp",product_price,0 };
-	strcpy(new_product.name, product_name);
+	product new_product = { "tmp",product_price,0 };               // 새로운 상품 정보 초기화
+	strcpy(new_product.name, product_name);                  // 새로운 상품 정보에 새로운 상품이름 대입
 	
-	addDataToProductList(list, 1, new_product);
-	printf("추가 완료 !!\n");
-	keyPressDelay();
+	addDataToProductList(list, 1, new_product);            //리스트에 데이터 추가
+	printf("추가 완료 !!\n");											// 추가 완료 메시지
+	keyPressDelay();												// 키 입력 대기
 }
 void deleteProduct(productList *list)		// 상품 삭제 함수
 {
-	char product_name[21] = { "\0" };
-	int product_price = 0;
-	char del_product;
+	char product_name[21] = { "\0" };			// 상품 이름 변수
+	char del_product;							
 	Index find_product_idx;
 
-	printf("상품 삭제\n");				//TODO 가입 인터페이스 만들기
+	printf("상품 삭제\n");				//상품 삭제 메시지
 
 	printf("삭제 상품의 이름을 입력해주세요. (영문자 20자이내) :");
-	scanf("%s", product_name);
-	find_product_idx = findIndexOfProduct(list, product_name);
+	scanf("%s", product_name);			//삭제할 상품이름 입력
+	find_product_idx = findIndexOfProduct(list, product_name);			// 삭제할 상품 이름 인덱스 찾기
 
-	if (find_product_idx == -1)
+	if (find_product_idx == -1)			//찾지못하면
 	{
-		printf("상품을 찾지 못하였습니다.\n");
-		keyPressDelay();
-		return;
+		printf("상품을 찾지 못하였습니다.\n");   //에러메시지 출력
+		keyPressDelay();		// 키입력 대기
+		return;				//함수 종료
 	}
-	setCurrentProductNode(list, find_product_idx);
-	printf("상품을 찾았습니다!\n");
+	setCurrentProductNode(list, find_product_idx);				// 현재 노드를 찾은 인덱스로 변경 
+	printf("상품을 찾았습니다!\n");					// 상품 찾기 성공 메시지 출력 
 	printf("상품 정보\n%s %d %d\n", list->crnt->data.name, list->crnt->data.price, list->crnt->data.sellCnt);		// 찾은 상품 정보출력
 	
 
-	printf("삭제하시겠습니까? [Y:N] :");
+	printf("삭제하시겠습니까? [Y:N] :");        // 상품 삭제 여부 
 	getchar();
-	scanf("%c", &del_product);
+	scanf("%c", &del_product);          // 입력 
 
-	if (del_product == 'N' || del_product == 'n')
+	if (del_product == 'N' || del_product == 'n')   //n 일시 삭제 취소 
 	{
 		printf("삭제를 취소하셨습니다.\n");
 		keyPressDelay();
 		return;
 	}
+	// 이외에는 상품 삭제 
+	deleteDataFromProductList(list, find_product_idx);   // 리스트에서 상품 삭제
 
-	deleteDataFromProductList(list, find_product_idx);
-
-	printf("삭제 완료 !!\n");
-	keyPressDelay();
+	printf("삭제 완료 !!\n");  //상품 삭제 메시지 출력 
+	keyPressDelay();	// 키입력대기
 
 }
 void changeProductPrice(productList *list) // 상품 가격 변경 함수
 {
-	char product_name[21] = { "\0" };
-	int new_price = 0;
+	char product_name[21] = { "\0" };		// 이름 초기화
+	int new_price = 0;								// 새로운 가격
 	char change_product;
 	Index find_product_idx;
 
-	printf("상품 가격 변경\n");				//TODO 가입 인터페이스 만들기
+	printf("상품 가격 변경\n");				//상품 가격 변경 메뉴 출력 
 
 	printf("가격을 변경할 상품의 이름을 입력해주세요. (영문자 20자이내) :");
-	scanf("%s", product_name);
-	find_product_idx = findIndexOfProduct(list, product_name);
+	scanf("%s", product_name);											//이름 입력 
+	find_product_idx = findIndexOfProduct(list, product_name);      // 이름 찾아서 인덱스 반환 
 
-	if (find_product_idx == -1)
+	if (find_product_idx == -1)				// 찾지못하면 
 	{
-		printf("상품을 찾지 못하였습니다.\n");
-		keyPressDelay();
-		return;
+		printf("상품을 찾지 못하였습니다.\n");   //출력 
+		keyPressDelay(); //키 입력 대기
+		return; //함수 종료
 	}
 
-	setCurrentProductNode(list, find_product_idx);
-	printf("상품을 찾았습니다!\n");
+	setCurrentProductNode(list, find_product_idx);						// 현재 선택노드를 찾은 인덱스로
+	printf("상품을 찾았습니다!\n");   //상품 정보 출력 
 	printf("상품 정보\n%s %d %d\n", list->crnt->data.name, list->crnt->data.price, list->crnt->data.sellCnt);		// 찾은 상품 정보출력
-	printf("변경 하시겠습니까? [Y:N] :");
+	printf("변경 하시겠습니까? [Y:N] :");   // 변경 여부 
 	getchar();
-	scanf("%c", &change_product);
+	scanf("%c", &change_product);   //입력 
 
-	if (change_product == 'N' || change_product == 'n')
+	if (change_product == 'N' || change_product == 'n')   //n 이면 변경 취소
 	{
-		printf("변경을 취소하셨습니다.\n");
-		keyPressDelay();
-		return;
+		printf("변경을 취소하셨습니다.\n");   //변경취소 메시지
+		keyPressDelay();		//키입력대기
+		return;			//함수종료
 	}
 
-	printf("새로운 가격을 입력해주세요.(원) :");
+	printf("새로운 가격을 입력해주세요.(원) :");        // 새로운 가격입력
 	scanf("%d", &new_price);
 
-	list->crnt->data.price = new_price;
+	list->crnt->data.price = new_price;         // 새로운 가격 업데이트
 
-	printf("변경 완료 !!\n");
+	printf("변경 완료 !!\n");           // 변경완료 메시지
 
-	keyPressDelay();
+	keyPressDelay();			//키 입력대기 
 }
 void printAllProduct(productList *list)    // 모든 상품 출력 함수
 {
-	printProductList(list);
-	keyPressDelay();
+	printProductList(list);       // 상품 출력 함수 호출
+	keyPressDelay(); // 키 입력 대기
 }
 
 /* 주문 관리에 대한 함수 목록 */
 
 void orderProduct(productList *pro_list, memberList *mem_list)	// 상품 주문 함수
 {
-	Index idx;
-	int k;
-	char order, checkpoint;
-	while (true)
+	Index idx;       // 인덱스 
+	int k;     // 상품 갯수
+	char order, checkpoint;      // n 입력 확인 
+	while (true)				// 무한루프
 	{
-		printProductList(pro_list);
-		printf("무엇을 주문하시겠습니까? (0)처음으로\n");
+		printProductList(pro_list);         // 상품 리스트 출력 
+		printf("무엇을 주문하시겠습니까? (0)처음으로\n");   // 주문 메뉴 출력 
 		printf("(위에서부터 1번) 메뉴를 선택해주세요 : ");
-		scanf("%d", &idx);
-		system("cls");
-		if (idx == 0)
+		scanf("%d", &idx);           // 메뉴 입력
+		system("cls");            // 콘솔창 초기화
+		if (idx == 0)        // 0번은 종료 
 			return;
-		if (idx > sizeOfProductList(pro_list))
+		if (idx > sizeOfProductList(pro_list))        //예외처리 
 		{
-			printf("잘못된 입력입니다.\n");
-			keyPressDelay();
-			continue;
+			printInputError();						// 에러메시지 출력 
+			continue;					// 계속 
 		}
 
-		setCurrentProductNode(pro_list, idx);
-		product buy_product;
-		buy_product = getDataFromProductList(pro_list, idx);
+		setCurrentProductNode(pro_list, idx);				//현재 선택 노드를 입력한 인덱스로
+		product buy_product;											// 새로운 데이터 
+		buy_product = getDataFromProductList(pro_list, idx);      //상품 데이터를 받아온다.
 
-		printf("상품정보\n");
+		printf("상품정보\n");           //상품정보 출력 
 		printf("%s %d원\n", buy_product.name, buy_product.price);
 
-		printf("몇개를 주문하시겠습니까? :");
-		scanf("%d", &k);
-		system("cls");
-
+		printf("몇개를 주문하시겠습니까? :");       // 주문 개수
+		scanf("%d", &k);							//주문 개수입력
+		system("cls");			// 콘솔창 초기화
+		// 정보 출력 
 		printf("%s %d개를 주문 하셨습니다. 가격은 %d 입니다.\n", buy_product.name, k, k*buy_product.price);
-		printf("주문하시겠습니까? [Y:N] :");
+		printf("주문하시겠습니까? [Y:N] :");   //주문 여부
 		getchar();
 		scanf("%c", &order);
 
-		if (order == 'N' || order == 'n')
+		if (order == 'N' || order == 'n')   //N입력시 주문취소
 		{
-			printf("주문을 취소하셨습니다.\n");
-			keyPressDelay();
-			continue;
+			printf("주문을 취소하셨습니다.\n");  //메시지 출력
+			keyPressDelay();   //키입력대기
+			continue;    //함수 맨처음으로 
 		}
 
-		pro_list->crnt->data.sellCnt += k;
-		printf("주문 완료!!\n");
+		pro_list->crnt->data.sellCnt += k;     //판매 카운트 증가
+		printf("주문 완료!!\n");        // 주문완료 메시지출력 
 
-		printf("적립 포인트는 %d포인트 입니다.", (int)(k*buy_product.price*0.05));
-		printf("적립하시겠습니까? [Y:N] :");
+		printf("적립 포인트는 %d포인트 입니다.", (int)(k*buy_product.price*0.05));      //포인트적립
+		printf("적립하시겠습니까? [Y:N] :");   //포인트 적립 여부
 		getchar();
-		scanf("%c", &checkpoint);
-		system("cls");
-		if (checkpoint == 'N' || checkpoint == 'n')
+		scanf("%c", &checkpoint);      // 포인트 적립 여부 입력
+		system("cls");   //콘솔 초기화
+		if (checkpoint == 'N' || checkpoint == 'n') //n이면 적립취소
 		{
-			printf("적립을 취소하셨습니다.\n");
-			keyPressDelay();
-			continue;
+			printf("적립을 취소하셨습니다.\n");     // 적립취소 메시지
+			keyPressDelay();   // 키 입력 대기
+			continue;   // 함수 처음으로 
 		}
 
-		changePointOfMember(mem_list, (int)(k*buy_product.price*0.05));
+		changePointOfMember(mem_list, (int)(k*buy_product.price*0.05));  // 포인트 변경 함수 호출 
 	}
-
-
 }
 
 /* 매출 관리에 대한 함수 목록 */
 
 void printAllSales(productList *list)		// 총 매출 출력 함수
 {
-	int all_sales = 0;
+	int all_sales = 0;		//총매출 변수 초기화
 	productNode *ptr = list->head->next;												// ptr을 맨 처음 값 노드로 설정
 	if (!isEmptyProductList(list))																// 빈 리스트가 아니면 출력
 	{
@@ -1077,8 +1074,8 @@ void printAllSales(productList *list)		// 총 매출 출력 함수
 			ptr = ptr->next;														// ptr을 다음 노드로		/*TODO 데이터 출력 형식 바꿔야함*/
 		}
 	}
-	printf("총 매출은 %d 원 입니다.\n",all_sales);
-	keyPressDelay();
+	printf("총 매출은 %d 원 입니다.\n",all_sales);		// 매출 출력 
+	keyPressDelay();		// 키입력 대기
 }
 void printSalesByProduct(productList *list)					// 상품 별 매출 출력 함수
 {
@@ -1092,5 +1089,5 @@ void printSalesByProduct(productList *list)					// 상품 별 매출 출력 함수
 		}
 		printf("\n");
 	}
-	keyPressDelay();
+	keyPressDelay();		// 키 입력 대기
 }
