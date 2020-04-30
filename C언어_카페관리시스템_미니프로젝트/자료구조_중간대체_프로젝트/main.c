@@ -205,21 +205,28 @@ int main()			//메인함수 시작
 	member mdata1 = { "Kim","01012345678",1000 };
 	member mdata2 = { "Lee","01099999999",2000 };
 	member mdata3 = { "Park","01000000000",500 };
+	member mdata4 = { "Choi","01011112222",0 };
+	member mdata5 = { "Kang","01055556666",200 };
 	initializeMemberList(&member_list);				//리스트 초기화
-	addDataToMemberList(&member_list, 1, mdata1);   // 데이터 1,2,3 삽입
+	addDataToMemberList(&member_list, 1, mdata1);   // 데이터 1,2,3,4,5 삽입
 	addDataToMemberList(&member_list, 2, mdata2);
 	addDataToMemberList(&member_list, 3, mdata3);
-
+	addDataToMemberList(&member_list, 4, mdata4);
+	addDataToMemberList(&member_list, 5, mdata5);
 	/* 멤버 사전 데이터 삽입 끝 */
 
 	/* 상품 사전 데이터 삽입*/
 	product pdata1 = { "Coffee",3500,1 };
 	product pdata2 = { "Cake",5000,2 };
-	product pdata3 = { "Milk",1000,2 };
+	product pdata3 = { "Milk",1000,0 };
+	product pdata4 = { "Water",500,4 };
+	product pdata5 = { "Juice",1500,3 };
 	initializeProductList(&product_list);		//리스트 초기화 
-	addDataToProductList(&product_list, 1, pdata1);		//데이터 1,2,3 삽입
+	addDataToProductList(&product_list, 1, pdata1);		//데이터 1,2,3,4,5 삽입
 	addDataToProductList(&product_list, 2, pdata2);
 	addDataToProductList(&product_list, 3, pdata3);
+	addDataToProductList(&product_list, 4, pdata4);
+	addDataToProductList(&product_list, 5, pdata5);
 	/* 상품 사전 데이터 삽입 끝 */
 
 	enum main_menu menu;			//열거형 정의 
