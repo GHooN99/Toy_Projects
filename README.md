@@ -11,10 +11,12 @@
 -|-
 [가위바위보_분류기]|Python, AI(Teachable Machine) ,Arduino
 [암호화폐_시세조회기]| Python, GUI프로그래밍(PyQt5)
-
+[C언어 카페관리 프로젝트]|C, 콘솔 프로그램
 
 
 
 
 [가위바위보_분류기]: https://github.com/GHooN99/Toy_Projects/tree/master/%EA%B0%80%EC%9C%84%EB%B0%94%EC%9C%84%EB%B3%B4_%EB%B6%84%EB%A5%98%EA%B8%B0
 [암호화폐_시세조회기]: https://github.com/GHooN99/Toy_Projects/tree/master/%EC%95%94%ED%98%B8%ED%99%94%ED%8F%90_%EC%8B%9C%EC%84%B8%EC%A1%B0%ED%9A%8C%EA%B8%B0
+[C언어 카페관리 프로젝트]:
+https://github.com/GHooN99/Toy_Projects/tree/master/C%EC%96%B8%EC%96%B4_%EC%B9%B4%ED%8E%98%EA%B4%80%EB%A6%AC%EC%8B%9C%EC%8A%A4%ED%85%9C_%EB%AF%B8%EB%8B%88%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8
