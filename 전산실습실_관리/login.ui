@@ -24,7 +24,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../../Desktop/동아리 운영 관련/스마클~1/스마클 .jpg</normaloff>../../../Desktop/동아리 운영 관련/스마클~1/스마클 .jpg</iconset>
+    <normaloff>스마클 .jpg</normaloff>스마클 .jpg</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">font: 10pt &quot;맑은 고딕&quot;;
@@ -77,7 +77,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="BackgroundImg">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -90,7 +90,7 @@
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap>../../../Desktop/캡처.JPG</pixmap>
+     <pixmap>캡처.JPG</pixmap>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">
@@ -222,7 +222,7 @@ font: 75 16pt &quot;맑은 고딕&quot;;</string>
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <zorder>label</zorder>
+   <zorder>BackgroundImg</zorder>
    <zorder>btnLogin</zorder>
    <zorder>inputName</zorder>
    <zorder>labelName</zorder>
